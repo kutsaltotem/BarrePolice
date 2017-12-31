@@ -5,7 +5,7 @@
       | | | | | | (_| | |_| || (_| | || (_| |
       |_| |_| |_|\__,_|\__|\__\__,_|\__\__,_|
 
-      v1.2.0
+      v2.0.0
 
       Copyright 2017 Matthew Hesketh <wrxck0@gmail.com> & Diego Barreiro <diego@makeroid.io>
       See LICENSE for details
@@ -66,7 +66,7 @@ function mattata:init()
     print(connected_message)
     local info_message = '\tUsername: @' .. self.info.username .. '\n\tName: ' .. self.info.name .. '\n\tID: ' .. self.info.id
     print('\n' .. info_message .. '\n')
-    self.version = 'v1.2.0'
+    self.version = 'v2.0.0'
     -- Make necessary database changes if the version has changed.
     if not redis:get('mattata:version') or redis:get('mattata:version') ~= self.version then
         redis:set('mattata:version', self.version)
@@ -188,6 +188,7 @@ mattata.get_user_count = utils.get_user_count
 mattata.get_group_count = utils.get_group_count
 mattata.get_user_language = utils.get_user_language
 mattata.get_log_chat = utils.get_log_chat
+mattata.get_missing_languages = utils.get_missing_languages
 mattata.get_user_message_statistics = utils.get_user_message_statistics
 mattata.reset_message_statistics = utils.reset_message_statistics
 mattata.is_group = utils.is_group
@@ -220,13 +221,13 @@ mattata.is_user_blacklisted = utils.is_user_blacklisted
 mattata.input = utils.input
 mattata.get_message_statistics = utils.get_message_statistics
 mattata.get_received_messages_count = utils.get_received_messages_count
-mattata.get_sent_messages_count = utils.get_sent_messages_count
 mattata.get_received_callbacks_count = utils.get_received_callbacks_count
 mattata.get_received_inlines_count = utils.get_received_inlines_count
 mattata.case_insensitive_pattern = utils.case_insensitive_pattern
 mattata.is_pole_done = utils.is_pole_done
 mattata.is_subpole_done = utils.is_subpole_done
 mattata.is_fail_done = utils.is_fail_done
+mattata.is_pole_blacklisted = utils.is_pole_blacklisted
 mattata.split = utils.split
 mattata.getKeysSortedByValue = utils.getKeysSortedByValue
 
@@ -586,26 +587,32 @@ function mattata:process_plugin_extras()
             redis:hset('latest_pole:' .. message.chat.id, 'date', os.date("%x"))
             redis:hset('pole_stats:' .. message.chat.id, message.from.id, math.floor(tonumber(redis:hget('pole_stats:' .. message.chat.id, message.from.id) or 0)+1))
             redis:hset('group_pole_stats:' .. message.chat.id, message.from.id, math.floor(tonumber(redis:hget('group_pole_stats:' .. message.chat.id, message.from.id) or 0)+5))
-            redis:hset('global_pole', message.from.id, math.floor(tonumber(redis:hget('global_pole', message.from.id) or 0)+1))
-            redis:hset('global_pole_stats', message.from.id, math.floor(tonumber(redis:hget('global_pole_stats', message.from.id) or 0)+5))
+            if not mattata.is_pole_blacklisted(message.from.id) then
+                redis:hset('global_pole', message.from.id, math.floor(tonumber(redis:hget('global_pole', message.from.id) or 0)+1))
+                redis:hset('global_pole_stats', message.from.id, math.floor(tonumber(redis:hget('global_pole_stats', message.from.id) or 0)+5))
+            end
             mattata.send_reply(message, message.from.first_name.." has done the POLE!")
-        elseif (message.text:match('^'..mattata.case_insensitive_pattern('subpole')) or message.text:match('^'..mattata.case_insensitive_pattern('plata')) or message.text:match('^'..mattata.case_insensitive_pattern('sub'))) and not mattata.is_subpole_done(message.chat.id, message.from.id) then
+        elseif (message.text:match('^'..mattata.case_insensitive_pattern('subpole')) or message.text:match('^'..mattata.case_insensitive_pattern('plata')) or message.text:match('^'..mattata.case_insensitive_pattern('sub'))) and not mattata.is_subpole_done(message.chat.id, message.from.id) and mattata.is_pole_done(message.chat.id, message.from.id) then
             redis:hset('subpole:' .. date .. ':' .. message.chat.id, 'user', message.from.id)
             redis:hset('subpole:' .. date .. ':' .. message.chat.id, 'time', os.date("%X"))
             redis:hset('latest_subpole:' .. message.chat.id, 'date', os.date("%x"))
             redis:hset('subpole_stats:' .. message.chat.id, message.from.id, math.floor(tonumber(redis:hget('subpole_stats:' .. message.chat.id, message.from.id) or 0)+1))
             redis:hset('group_pole_stats:' .. message.chat.id, message.from.id, math.floor(tonumber(redis:hget('group_pole_stats:' .. message.chat.id, message.from.id) or 0)+3))
-            redis:hset('global_subpole', message.from.id, math.floor(tonumber(redis:hget('global_subpole', message.from.id) or 0)+1))
-            redis:hset('global_pole_stats', message.from.id, math.floor(tonumber(redis:hget('global_pole_stats', message.from.id) or 0)+3))
+            if not mattata.is_pole_blacklisted(message.from.id) then
+                redis:hset('global_subpole', message.from.id, math.floor(tonumber(redis:hget('global_subpole', message.from.id) or 0)+1))
+                redis:hset('global_pole_stats', message.from.id, math.floor(tonumber(redis:hget('global_pole_stats', message.from.id) or 0)+3))
+            end
             mattata.send_reply(message, message.from.first_name.." has done the SUBPOLE")
-        elseif (message.text:match('^'..mattata.case_insensitive_pattern('fail')) or message.text:match('^'..mattata.case_insensitive_pattern('bronce'))) and not mattata.is_fail_done(message.chat.id, message.from.id) then
+        elseif (message.text:match('^'..mattata.case_insensitive_pattern('fail')) or message.text:match('^'..mattata.case_insensitive_pattern('bronce'))) and not mattata.is_fail_done(message.chat.id, message.from.id) and mattata.is_subpole_done(message.chat.id, message.from.id) and mattata.is_pole_done(message.chat.id, message.from.id) then
             redis:hset('fail:' .. date .. ':' .. message.chat.id, 'user', message.from.id)
             redis:hset('fail:' .. date .. ':' .. message.chat.id, 'time', os.date("%X"))
             redis:hset('latest_fail:' .. message.chat.id, 'date', os.date("%x"))
             redis:hset('fail_stats:' .. message.chat.id, message.from.id, math.floor(tonumber(redis:hget('fail_stats:' .. message.chat.id, message.from.id) or 0)+1))
             redis:hset('group_pole_stats:' .. message.chat.id, message.from.id, math.floor(tonumber(redis:hget('group_pole_stats:' .. message.chat.id, message.from.id) or 0)+1))
-            redis:hset('global_fail', message.from.id, math.floor(tonumber(redis:hget('global_fail', message.from.id) or 0)+1))
-            redis:hset('global_pole_stats', message.from.id, math.floor(tonumber(redis:hget('global_pole_stats', message.from.id) or 0)+1))
+            if not mattata.is_pole_blacklisted(message.from.id) then
+                redis:hset('global_fail', message.from.id, math.floor(tonumber(redis:hget('global_fail', message.from.id) or 0)+1))
+                redis:hset('global_pole_stats', message.from.id, math.floor(tonumber(redis:hget('global_pole_stats', message.from.id) or 0)+1))
+            end
             mattata.send_reply(message, message.from.first_name.." has done a FAIL, sad")
         end
     end
@@ -923,6 +930,9 @@ function mattata.sort_message(message)
         message.chat = mattata.process_chat(message.chat)
         message.left_chat_member = mattata.process_user(message.left_chat_member)
         redis:srem('chat:' .. message.chat.id .. ':users', message.left_chat_member.id)
+        if mattata.get_setting(message.chat.id, 'use administration') and mattata.get_setting(message.chat.id, 'delete leftgroup messages') then
+            mattata.delete_message(message.chat.id, message.message_id)
+        end
         if mattata.get_setting(message.chat.id, 'log administrative actions') and mattata.get_setting(message.chat.id, 'log leftgroup') then
             local log_chat = mattata.get_log_chat(message.chat.id)
             mattata.send_message(log_chat, string.format('#leftmember #user_'..message.from.id..' #group_'..tostring(message.chat.id):gsub("%-", "")..'\n\n<pre>%s [%s] left %s [%s]</pre>', mattata.escape_html(message.from.first_name), message.from.id, mattata.escape_html(message.chat.title), message.chat.id), 'html')
@@ -1461,6 +1471,9 @@ function mattata:process_message()
                 keyboard = mattata.inline_keyboard():row(mattata.row():url_button(utf8.char(128218) .. ' ' .. language['welcome']['1'], 'https://t.me/' .. self.info.username .. '?start=' .. message.chat.id .. '_rules'))
             end
             return mattata.send_message(message, welcome_message, 'markdown', true, false, nil, keyboard)
+        end
+        if mattata.get_setting(message.chat.id, 'use administration') and mattata.get_setting(message.chat.id, 'delete joingroup messages') then
+            mattata.delete_message(message.chat.id, message.message_id)
         end
         if mattata.get_setting(message.chat.id, 'log administrative actions') and mattata.get_setting(message.chat.id, 'log joingroup') then
             local log_chat = mattata.get_log_chat(message.chat.id)

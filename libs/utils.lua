@@ -174,6 +174,19 @@ function utils.get_log_chat(chat_id)
     return redis:hget('chat:' .. chat_id .. ':settings', 'log chat') or configuration.log_channel or false
 end
 
+function utils.get_missing_languages(delimiter)
+    local missing_languages = redis:smembers('mattata:missing_languages')
+    if not missing_languages then
+        return false
+    end
+    local output = {}
+    for k, v in pairs(missing_languages) do
+        table.insert(output, v)
+    end
+    local delimiter = delimiter or ', '
+    return table.concat(output, delimiter)
+end
+
 function utils.get_list(name)
     name = tostring(name)
     local length = redis:llen(name)
@@ -236,7 +249,6 @@ function utils.get_inline_list(query, offset)
 end
 
 function utils.send_reply(message, text, parse_mode, disable_web_page_preview, reply_markup, token)
-    redis:incr('stats:messages:sent')
     reply_markup = reply_markup or {
         ['remove_keyboard'] = true
     }
@@ -329,10 +341,6 @@ end
 
 function utils.get_received_messages_count()
     return tonumber(redis:get('stats:messages:received')) or 0
-end
-
-function utils.get_sent_messages_count()
-    return tonumber(redis:get('stats:messages:sent')) or 0
 end
 
 function utils.get_received_callbacks_count()
@@ -918,6 +926,13 @@ function utils.is_user_blacklisted(message)
             api.send_message(message.chat.id, output) -- Alert the group of this user's presence on the global blacklist.
             redis:sadd('global_blacklist_unban:' .. message.chat.id, message.from.id)
         end
+        return true
+    end
+    return false
+end
+
+function utils.is_pole_blacklisted(user_id)
+    if redis:get('pole_blacklist:' .. user_id) then
         return true
     end
     return false

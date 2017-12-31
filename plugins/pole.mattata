@@ -1,5 +1,5 @@
 --[[
-    Copyright 2017 Matthew Hesketh <wrxck0@gmail.com>
+    Copyright 2017 Diego Barreiro <diego@makeroid.io>
     This code is licensed under the MIT. See LICENSE for details.
 ]]
 
@@ -8,7 +8,12 @@ local mattata = require('mattata')
 local redis = dofile('libs/redis.lua')
 
 function pole:init()
-    pole.commands = mattata.commands(self.info.username):command('pole'):command('polestats'):command('polereset'):command('gpole'):command('gpolestats').table
+    pole.commands = mattata.commands(self.info.username)
+    :command('pole'):command('polestats')
+    :command('polereset')
+    :command('gpole'):command('gpolestats')
+    :command('gpolereset')
+    :command('gpoleban'):command('gpoleunban').table
     pole.help = '/pole - Get the stats for the pole.'
 end
 
@@ -66,7 +71,7 @@ function pole:on_message(message, configuration, language)
             output = output.."\n<b>POLE RANK</b>\n"
             local poles = {}
             for user, value in pairs(redis:hgetall('pole_stats:' .. message.chat.id)) do
-                poles[user] = tonumber(value)
+                poles[user] = math.floor(tonumber(value))
             end
             local sortedKeys = mattata.getKeysSortedByValue(poles, function(a, b) return a > b end)
             local output_values = {}
@@ -94,7 +99,7 @@ function pole:on_message(message, configuration, language)
             output = output.."\n<b>SUBPOLE RANK</b>\n"
             local subpoles = {}
             for user, value in pairs(redis:hgetall('subpole_stats:' .. message.chat.id)) do
-                subpoles[user] = tonumber(value)
+                subpoles[user] = math.floor(tonumber(value))
             end
             local sortedKeys = mattata.getKeysSortedByValue(subpoles, function(a, b) return a > b end)
             local output_values = {}
@@ -122,7 +127,7 @@ function pole:on_message(message, configuration, language)
             output = output.."\n<b>FAILS RANK</b>\n"
             local fails = {}
             for user, value in pairs(redis:hgetall('fail_stats:' .. message.chat.id)) do
-                fails[user] = tonumber(value)
+                fails[user] = math.floor(tonumber(value))
             end
             local sortedKeys = mattata.getKeysSortedByValue(fails, function(a, b) return a > b end)
             local output_values = {}
@@ -153,11 +158,15 @@ function pole:on_message(message, configuration, language)
         if #poles > 0 or #subpoles > 0 or #fails > 0 then
             output = output.."\n\n<b>GROUP RANK</b>\n"
             local stats = redis:hgetall('group_pole_stats:' .. message.chat.id)
-            local sortedKeys = mattata.getKeysSortedByValue(stats, function(a, b) return a > b end)
+            local parsed_stats = {}
+            for k, v in pairs(stats) do
+                parsed_stats[k] = math.floor(tonumber(v))
+            end
+            local sortedKeys = mattata.getKeysSortedByValue(parsed_stats, function(a, b) return a > b end)
             local output_values = {}
             local output_ids = {}
             for _, key in ipairs(sortedKeys) do
-                output_values[_] = tonumber(stats[key])
+                output_values[_] = tonumber(parsed_stats[key])
                 output_ids[_] = key
             end
             for k, v in pairs(output_ids) do
@@ -203,7 +212,7 @@ function pole:on_message(message, configuration, language)
         return mattata.send_reply(message, "Successfully resetted Pole stats!")
 
 
-    elseif message.text:match('^[/!#]gpole') or message.text:match('^[/!#]gpolestats') then
+    elseif (message.text:match('^[/!#]gpole') or message.text:match('^[/!#]gpolestats')) and not (message.text:match('^[/!#]gpolereset') or message.text:match('^[/!#]gpoleban') or message.text:match('^[/!#]gpoleunban')) then
         local poles = redis:keys("global_pole")
         local subpoles = redis:keys("global_subpole")
         local fails = redis:keys("global_fail")
@@ -214,7 +223,7 @@ function pole:on_message(message, configuration, language)
             output = output.."\n<b>GLOBAL POLE RANK</b>\n"
             local poles = {}
             for user, value in pairs(redis:hgetall('global_pole')) do
-                poles[user] = tonumber(value)
+                poles[user] = math.floor(tonumber(value))
             end
             local sortedKeys = mattata.getKeysSortedByValue(poles, function(a, b) return a > b end)
             local output_values = {}
@@ -242,7 +251,7 @@ function pole:on_message(message, configuration, language)
             output = output.."\n<b>GLOBAL SUBPOLE RANK</b>\n"
             local subpoles = {}
             for user, value in pairs(redis:hgetall('global_subpole')) do
-                subpoles[user] = tonumber(value)
+                subpoles[user] = math.floor(tonumber(value))
             end
             local sortedKeys = mattata.getKeysSortedByValue(subpoles, function(a, b) return a > b end)
             local output_values = {}
@@ -270,7 +279,7 @@ function pole:on_message(message, configuration, language)
             output = output.."\n<b>GLOBAL FAILS RANK</b>\n"
             local fails = {}
             for user, value in pairs(redis:hgetall('global_fail')) do
-                fails[user] = tonumber(value)
+                fails[user] = math.floor(tonumber(value))
             end
             local sortedKeys = mattata.getKeysSortedByValue(fails, function(a, b) return a > b end)
             local output_values = {}
@@ -301,11 +310,15 @@ function pole:on_message(message, configuration, language)
         if #poles > 0 or #subpoles > 0 or #fails > 0 then
             output = output.."\n\n<b>GLOBAL GENERAL RANK</b>\n"
             local stats = redis:hgetall('global_pole_stats')
-            local sortedKeys = mattata.getKeysSortedByValue(stats, function(a, b) return a > b end)
+            local parsed_stats = {}
+            for k, v in pairs(stats) do
+                parsed_stats[k] = math.floor(tonumber(v))
+            end
+            local sortedKeys = mattata.getKeysSortedByValue(parsed_stats, function(a, b) return a > b end)
             local output_values = {}
             local output_ids = {}
             for _, key in ipairs(sortedKeys) do
-                output_values[_] = tonumber(stats[key])
+                output_values[_] = tonumber(parsed_stats[key])
                 output_ids[_] = key
             end
             for k, v in pairs(output_ids) do
@@ -328,6 +341,45 @@ function pole:on_message(message, configuration, language)
             output = "I couldn't retreive any global POLE information"
         end
         return mattata.send_reply(message, output, 'html')
+
+
+    elseif message.text:match('^[/!#]gpolereset') and mattata.is_global_admin(message.from.id) then
+        local input = mattata.input(message)
+        if message.reply then
+            input = message.reply.from.id
+        end
+        if not input then
+            return mattata.send_reply(message, 'Please specify an user to reset their global pole stats')
+        end
+        redis:hdel('global_pole', input)
+        redis:hdel('global_subpole', input)
+        redis:hdel('global_fail', input)
+        redis:hdel('global_pole_stats', input)
+        return mattata.send_reply(message, 'Successfully resetted pole stats!')
+
+    elseif message.text:match('^[/!#]gpoleban') and mattata.is_global_admin(message.from.id) then
+        local input = mattata.input(message)
+        if message.reply then
+            input = message.reply.from.id
+        end
+        if not input then
+            return mattata.send_reply(message, 'Please specify an user to ban from the global pole stats')
+        end
+        redis:set(
+            'pole_blacklist:' .. input,
+            true
+        )
+        return mattata.send_reply(message, 'Successfully banned! Remember that stats are still saved. Run /gpolereset ID to remove them')
+    elseif message.text:match('^[/!#]gpoleunban') and mattata.is_global_admin(message.from.id) then
+        local input = mattata.input(message)
+        if message.reply then
+            input = message.reply.from.id
+        end
+        if not input then
+            return mattata.send_reply(message, 'Please specify an user to unban from the global pole stats')
+        end
+        redis:del('pole_blacklist:' .. input)
+        return mattata.send_reply(message, 'Successfully unbanned!')
     end
 end
 

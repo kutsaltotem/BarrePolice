@@ -55,7 +55,7 @@ function antispam.get_keyboard(chat_id, language)
         {
             {
                 ['text'] = caption,
-                ['callback_data'] = 'antispam:' .. chat_id .. ':' .. caption:lower()
+                ['callback_data'] = 'antispam:' .. chat_id .. ':' .. (status and "disable" or "enable")
             }
         }
     )

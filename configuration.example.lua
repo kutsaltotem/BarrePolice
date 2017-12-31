@@ -141,6 +141,47 @@ return { -- Rename this file to configuration.lua for the bot to work!
         'Howdy, NAME!',
         'Hi, NAME!'
     },
+    ['eightball'] = { -- Values used in plugins/eightball.lua.
+        'It is certain.',
+        'It has been confirmed.',
+        'Without any doubts.',
+        'Yes, definitely.',
+        'You may rely on it.',
+        'As I see it, yes.',
+        'Most likely.',
+        'Outlook: not so good.',
+        'Yes.',
+        'Signs point to yes.',
+        'The reply is very weak, try again.',
+        'Ask again later.',
+        'I can not tell you right now.',
+        'Cannot predict right now.',
+        'Concentrate, and then ask again.',
+        'Do not count on it.',
+        'My reply is no.',
+        'My sources say possibly.',
+        'Outlook: very good.',
+        'Very doubtful.',
+        'Rowan\'s voice echoes: There is a time and place for everything, but not now.'
+    },
+    ['faces'] = { -- Expressive emoticon faces which can be triggered with /<name>, used in plugins/faces.lua.
+        ['shrug'] = '¯\\_(ツ)_/¯',
+        ['lenny'] = '( ͡° ͜ʖ ͡°)',
+        ['flip'] = '(╯°□°）╯︵ ┻━┻',
+        ['look'] = 'ಠ_ಠ',
+        ['shots'] = 'SHOTS FIRED',
+        ['facepalm'] = '(－‸ლ)',
+        ['vibrator'] = 'ヽヽ༼༼ຈຈل͜ل͜ຈຈ༽༽ﾉﾉ TURN OFF THE VIBRATOR ヽヽ༼༼ຈຈل͜ل͜ຈຈ༽༽ﾉﾉ',
+        ['africa'] = '( ͡° ͜ʖ ͡°) Every 60 seconds in Africa, a minute passes. Together we can stop this. Please spread the word ( ͡° ͜ʖ ͡°)',
+        ['chocolate'] = '\n╔╦╦\n╠╬╬╬╣\n╠╬╬╬╣OK! WHO ATE MY\n╠╬╬╬╣CHOCOLATE!!\n╚╩╩╩╝',
+        ['kirby'] = '(つ -‘ _ ‘- )つ',
+        ['finger'] = '\n⁣               /´¯/)\n             ,/¯  /\n             /   /\n          /´¯/’  ’/´¯¯`·¸\n        /’/  /   /    /¨¯\\\n       (‘(   ´  ´   ¯~/’  ’)\n        \\          ’    /\n        \\   \\       _ ·´\n         \\          (\n          \\          \\,',
+        ['rub'] = 'ヽ( ° ͜ʖ͡°)ﾉ ʀuʙ ᴍʏ ᴅᴏɴɢᴇʀ ヽ( ° ͜ʖ͡°)ﾉ',
+        ['party'] = '୧༼ ͡◉ل͜ ͡◉༽୨ (ง ͠° ل͜ °)ง ヽ༼ຈل͜ຈ༽ﾉ ༼ ºل͟º ༽ Join da Party ୧༼ ͡◉ل͜ ͡◉༽୨ (ง ͠° ل͜ °)ง ヽ༼ຈل͜ຈ༽ﾉ ༼ ºل͟º ༽',
+        ['lift'] = '\n❚█══█❚\nDo you even lift?',
+        ['specs'] = 'ᒡ◯ᵔ◯ᒢ',
+        ['sigh'] = '( ._.)'
+    },
     ['stickers'] = { -- Values used in mattata.lua, for administrative plugin functionality.
     -- These are the file_id values for stickers which are binded to the relevant command.
         ['ban'] = {
