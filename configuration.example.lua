@@ -70,7 +70,9 @@ return { -- Rename this file to configuration.lua for the bot to work!
     ['keys'] = { -- API keys needed for the full functionality of several plugins.
         ['apod'] = '', -- https://api.nasa.gov/api.html
         ['cats'] = '', -- http://thecatapi.com/api-key-registration.html
+        ['clashroyale'] = '', -- https://docs.cr-api.com
         ['translate'] = '', -- https://tech.yandex.com/keys/get/?service=trnsl
+        ['synonym'] = '', -- https://tech.yandex.com/keys/get/?service=dict
         ['lyrics'] = '', -- https://developer.musixmatch.com/admin/applications
         ['lastfm'] = '', -- http://www.last.fm/api/account/create
         ['weather'] = '', -- https://darksky.net/dev/register
