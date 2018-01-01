@@ -8,8 +8,131 @@ local mattata = require('mattata')
 local redis = dofile('libs/redis.lua')
 
 function ban:init()
-    ban.commands = mattata.commands(self.info.username):command('ban'):command('b').table
+    ban.commands = mattata.commands(self.info.username):command('ban'):command('b'):command('bam').table
     ban.help = '/ban [user] - Bans a user from the current chat. This command can only be used by moderators and administrators of a supergroup. Alias: /b'
+end
+
+function ban:on_callback_query(callback_query, message, configuration)
+    if callback_query.data == 'nil'
+    then
+        return mattata.answer_callback_query(callback_query.id)
+    elseif not mattata.is_group_admin(
+        callback_query.data:match('^(%-%d+):%a*'),
+        callback_query.from.id
+    )
+    then
+        return mattata.answer_callback_query(
+            callback_query.id,
+            'You\'re not an administrator in that chat!'
+        )
+    end
+
+    local chat_id, user = callback_query.data:match('^(%-%d+):(s)')
+
+    local success = mattata.get_user(user)
+    if not success then
+        user_object = mattata.get_chat(user)
+    else
+        user_object = mattata.get_chat(success.result.id)
+    end
+    if not user_object
+    then
+        return mattata.send_message(
+            chat_id,
+            language['errors']['unknown']
+        )
+    elseif user_object.result.id == self.info.id
+    then
+        return
+    end
+    user_object = user_object.result
+    local status = mattata.get_chat_member(
+        chat_id,
+        user_object.id
+    )
+    if not status
+    then
+        return mattata.send_message(
+            chat_id,
+            language['errors']['generic']
+        )
+    elseif mattata.is_group_admin(
+        chat_id,
+        user_object.id
+    )
+    or status.result.status == 'creator'
+    or status.result.status == 'administrator'
+    then -- We won't try and ban moderators and administrators.
+        return mattata.send_message(
+            chat_id,
+            language['ban']['2']
+        )
+    elseif status.result.status == 'kicked'
+    then -- Check if the user has already been kicked.
+        return mattata.send_message(
+            chat_id,
+            language['ban']['4']
+        )
+    end
+
+    local success = mattata.ban_chat_member( -- Attempt to ban the user from the group.
+        chat_id,
+        user_object.id
+    )
+    if not success
+    then -- Since we've ruled everything else out, it's safe to say if it wasn't a success then the bot isn't an administrator in the group.
+        return mattata.send_message(
+            chat_id,
+            language['ban']['5']
+        )
+    end
+    redis:hincrby(
+        string.format(
+            'chat:%s:%s',
+            chat_id,
+            user_object.id
+        ),
+        'bans',
+        1
+    )
+    if redis:hget(
+        string.format(
+            'chat:%s:settings',
+            chat_id
+        ),
+        'log administrative actions'
+    ) and mattata.get_setting(chat_id, 'log ban')
+    then
+        mattata.send_message(
+            mattata.get_log_chat(chat_id),
+            string.format(
+                '#action #ban #admin_'..tostring(callback_query.from.id)..' #user_'..tostring(user_object.id)..' #group_'..tostring(chat_id):gsub("%-", "")..'\n\n<pre>%s%s [%s] has banned %s%s [%s] from %s%s [%s]%s.</pre>',
+                callback_query.from.username and '@' or '',
+                callback_query.from.username or mattata.escape_html(message.from.first_name),
+                callback_query.from.id,
+                user_object.username and '@' or '',
+                user_object.username or mattata.escape_html(user_object.first_name),
+                user_object.id,
+                callback_query.chat.username and '@' or '',
+                callback_query.chat.username or mattata.escape_html(callback_query.chat.title),
+                chat_id,
+                reason and ', for ' .. reason or ''
+            ),
+            'html'
+        )
+    end
+    return mattata.send_message(
+        chat_id,
+        string.format(
+            '<pre>%s%s has banned %s%s%s.</pre>',
+            callback_query.from.username and '@' or '',
+            callback_query.from.username or mattata.escape_html(callback_query.from.first_name),
+            user_object.username and '@' or '',
+            user_object.username or mattata.escape_html(user_object.first_name),
+            reason and ', for ' .. reason or ''
+        ),
+        'html'
+    )
 end
 
 function ban:on_message(message, configuration, language)
@@ -122,6 +245,18 @@ function ban:on_message(message, configuration, language)
         return mattata.send_reply(
             message,
             language['ban']['4']
+        )
+    end
+    if message.text:match('^[/!#]bam')
+    then
+        return mattata.send_reply(
+            message,
+            "LoL",
+            'html',
+            true,
+            false,
+            nil,
+            json.encode(mattata.inline_keyboard():row(mattata.row():callback_data_button('Ban User', 'ban:' .. message.chat.id .. ':' .. user)))
         )
     end
     local success = mattata.ban_chat_member( -- Attempt to ban the user from the group.
