@@ -145,6 +145,7 @@ function rss.subscribe(id, url)
     if #parsed.entries > 0 then
         last_entry = parsed.entries[1].id
     end
+    print(last_entry)
     local name = parsed.feed.title
     redis:set(
         protocol_hash,
@@ -290,7 +291,7 @@ function rss:m_cron()
             else
                 content = ''
             end
-            text = text .. '<b>' .. mattata.escape_html(title) .. '</b>\n<i>' .. mattata.escape_html(mattata.trim(content)) .. '</i>\n<a href="' .. link .. '">Read more.</a>'
+            text = text .. '<b>' .. mattata.escape_html(title) .. '</b>\n<i>' .. mattata.escape_html(mattata.trim(content)) .. '</i>\n<a href="' .. link .. '">Read more.</a>\n\n\n'
             if n > 1 then
                 break
             end
