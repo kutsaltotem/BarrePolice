@@ -163,7 +163,6 @@ function administration.get_initial_keyboard(chat_id, page)
                 'administration:' .. chat_id .. ':delete_reply_on_action:3'
             )
         )
-        :row(mattata.row():callback_data_button('Trusted Users Permissions', 'administration:' .. chat_id .. ':trusted_permissions'))
         :row(
             mattata.row()
             :callback_data_button('Notify Admins on Actions?', 'administration:nil')
@@ -181,7 +180,6 @@ function administration.get_initial_keyboard(chat_id, page)
                 'administration:' .. chat_id .. ':delete_joingroup_messages:3'
             )
         )
-        :row(mattata.row():callback_data_button('Trusted Users Permissions', 'administration:' .. chat_id .. ':trusted_permissions'))
         :row(
             mattata.row()
             :callback_data_button('Delete LeftGroup Messages?', 'administration:nil')
