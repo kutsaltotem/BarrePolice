@@ -6,6 +6,7 @@
 local ban = {}
 local mattata = require('mattata')
 local redis = dofile('libs/redis.lua')
+local json = require('dkjson')
 
 function ban:init()
     ban.commands = mattata.commands(self.info.username):command('ban'):command('b'):command('bam').table
