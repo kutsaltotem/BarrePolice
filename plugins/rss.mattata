@@ -373,7 +373,7 @@ function rss:on_message(message, configuration)
             )
         )
     elseif mattata.is_global_admin(message.from.id) and input == 'reload' then
-        rss:cron()
+        rss:m_cron()
         return mattata.send_message(
             message.chat.id,
             'Checking for RSS updates...'
