@@ -794,4 +794,6 @@ function clashroyale:on_message(message, configuration, language)
     end
 end
 
+
+
 return clashroyale
