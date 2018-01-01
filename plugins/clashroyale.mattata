@@ -249,7 +249,7 @@ function clashroyale.parse_player_cards(data, page)
         output = output.. "<b>" .. mattata.escape_html(data.cards[i].name) .. "</b> | Level <code>" .. math.floor(tonumber(data.cards[i].level)) .. "/" .. math.floor(tonumber(data.cards[i].maxLevel)) .. "</code>\n"
         output = output.. "<code>" .. math.floor(tonumber(data.cards[i].count)) .. "</code> Cards\n"
         if requiredForUpgrade ~= "Maxed" then
-            output = output.. "<code>" .. math.floor(tonumber(data.cards[i].requiredForUpgrade)) .. "</code> Cards required for level <code>" .. math.floor(data.cards[i].level+1) .. "</code> <i>(missing</i> <code>" .. math.floor(tonumber(data.cards[i].leftToUpgrade)) .. "</code> <i>to upgrade)</i>\n"
+            output = output.. "<code>" .. math.floor(tonumber(data.cards[i].requiredForUpgrade) or 0) .. "</code> cards required for level <code>" .. math.floor(data.cards[i].level+1) .. "</code> <i>(missing</i> <code>" .. math.floor(tonumber(data.cards[i].leftToUpgrade)) .. "</code> <i>to upgrade)</i>\n"
         end
         output = output.. "\n"
     end
