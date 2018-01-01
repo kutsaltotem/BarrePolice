@@ -1135,22 +1135,30 @@ function administration.trusted(message)
     for i, trusted in pairs(success) do
         local user_output
         local user = mattata.get_user(trusted) or mattata.get_chat(trusted)
-        user = user.result
-        local branch = ' ├ '
-        if user.username then
-            user_output = string.format(
-                '<a href="https://t.me/%s">%s</a>',
-                user.username,
-                user.first_name
-            )
-        else
-            user_output = user.first_name
-        end
         user_count = user_count + 1
-        if user_count == #success then
-            branch = ' └ '
+        if user then
+            user = user.result
+            local branch = ' ├ '
+            if user.username then
+                user_output = string.format(
+                    '<a href="https://t.me/%s">%s</a>',
+                    user.username,
+                    user.first_name
+                )
+            else
+                user_output = user.first_name
+            end
+            if user_count == #success then
+                branch = ' └ '
+            end
+            output = output .. branch .. user_output .. '\n'
+        else
+            redis:srem(
+                'administration:' .. message.chat.id .. ':trusted',
+                trusted
+            )
+            mattata.send_reply(message, "I've untrusted the user <code>" .. trusted .. "</code> as I couldn\'t get his information or is a deleted account")
         end
-        output = output .. branch .. user_output .. '\n'
     end
     return mattata.send_reply(
         message,
@@ -1172,22 +1180,24 @@ function administration.muted(message)
     for i, muted in pairs(success) do
         local user_output
         local user = mattata.get_user(muted) or mattata.get_chat(muted)
-        user = user.result
-        local branch = ' ├ '
-        if user.username then
-            user_output = string.format(
-                '<a href="https://t.me/%s">%s</a>',
-                user.username,
-                user.first_name
-            )
-        else
-            user_output = user.first_name
-        end
         user_count = user_count + 1
-        if user_count == #success then
-            branch = ' └ '
+        if user then
+            user = user.result
+            local branch = ' ├ '
+            if user.username then
+                user_output = string.format(
+                    '<a href="https://t.me/%s">%s</a>',
+                    user.username,
+                    user.first_name
+                )
+            else
+                user_output = user.first_name
+            end
+            if user_count == #success then
+                branch = ' └ '
+            end
+            output = output .. branch .. user_output .. '\n'
         end
-        output = output .. branch .. user_output .. '\n'
     end
     return mattata.send_reply(
         message,
