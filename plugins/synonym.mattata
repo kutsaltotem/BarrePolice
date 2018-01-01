@@ -28,7 +28,6 @@ function synonym:on_message(message, configuration, language)
         )
     end
     local jstr, res = https.request('https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=' .. configuration.keys.synonym .. '&lang=' .. configuration.language .. '-' .. configuration.language .. '&text=' .. url.escape(input))
-    print(configuration.keys.synonym)
     if res ~= 200
     then
         return mattata.send_reply(
