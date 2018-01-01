@@ -77,7 +77,7 @@ function weather:on_message(message, configuration, language)
     end
     if (message.chat.type ~= "private" and redis:hget('chat:' .. message.chat.id .. ':values','group language')) then
         locale = redis:hget('chat:' .. message.chat.id .. ':values','group language'):gsub("(.*)_.*$","%1")
-    elseif (message.chat.type == "priate" and redis:hget('chat:' .. message.from.id .. ':settings', 'language')) or (message.chat.type ~= "private" and not mattata.get_setting(message.chat.id, 'force group language')) then
+    elseif (message.chat.type == "priate" and redis:hget('chat:' .. message.from.id .. ':settings', 'language')) or (message.chat.type ~= "private" and not mattata.get_setting(message.chat.id, 'force group language') and redis:hget('chat:' .. message.from.id .. ':settings', 'language')) then
         locale = redis:hget('chat:' .. message.from.id .. ':settings', 'language'):gsub("(.*)_.*$","%1")
     else
         locale = "en"
