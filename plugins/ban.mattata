@@ -250,13 +250,13 @@ function ban:on_message(message, configuration, language)
     end
     if message.text:match('^[/!#]bam')
     then
-        return mattata.send_reply(
-            message,
-            "LoL",
+        return mattata.send_message(
+            message.chat.id,
+            "<b>L</b><i>o</i><code>L</code>",
             'html',
             true,
             false,
-            nil,
+            message.message_id,
             json.encode(mattata.inline_keyboard():row(mattata.row():callback_data_button('Ban User', 'ban:' .. message.chat.id .. ':' .. user)))
         )
     end
