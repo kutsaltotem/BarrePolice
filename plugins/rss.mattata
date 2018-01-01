@@ -299,7 +299,7 @@ function rss:on_message(message, configuration)
     end
 end
 
-function rss:cron()
+function rss:m_cron()
     local keys = redis:hkeys(
         rss.get_redis_hash(
             '*',
