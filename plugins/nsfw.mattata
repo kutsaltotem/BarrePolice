@@ -54,7 +54,7 @@ function nsfw:on_message(message, configuration, language)
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
             local json_data = nsfw.request(configuration.keys.nsfw, "detect", request_url)
             if json_data and json_data.result == "ok" then
-                return mattata.send_reply(message, "That photo has a chance of <b>" .. mattata.round((json_data.content.score)*100, 3) .. "%</b> to contain <i>NonSafetyForWork content</i>", 'html')
+                return mattata.send_message(message.chat.id, "That photo has a chance of <b>" .. mattata.round((json_data.content.score)*100, 3) .. "%</b> to contain <i>NonSafetyForWork content</i>", 'html', false, false, message.reply.message_id)
             else
                 return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
             end
@@ -64,9 +64,9 @@ function nsfw:on_message(message, configuration, language)
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
             local json_data = nsfw.request(configuration.keys.nsfw, "detect", request_url)
             if json_data and json_data.result == "ok" then
-                return mattata.send_reply(message, "That photo has a chance of <b>" .. (json_data.content.message)*100 .. "%</b> to contain <i>NonSafetyForWork content</i>")
+                return mattata.send_message(message.chat.id, "That photo has a chance of <b>" .. mattata.round((json_data.content.score)*100, 3) .. "%</b> to contain <i>NonSafetyForWork content</i>", 'html', false, false, message.reply.message_id)
             else
-                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.message.."</code>")
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
             end
         else
             return mattata.send_reply(message, "I can only detect NSFW content from images!")
