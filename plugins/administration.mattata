@@ -469,7 +469,7 @@ function administration.get_nsfw_keyboard(chat_id)
         ['inline_keyboard'] = {}
     }
     table.insert(keyboard.inline_keyboard, {
-        {['text'] = 'NotSafetyForWork', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
+        {['text'] = 'Not Safety For Work', ['callback_data'] = 'administration:'..chat_id..':nsfw:help_general'},
     })
     table.insert(keyboard.inline_keyboard, {
         {['text'] = 'Filter Enabled?', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
@@ -478,10 +478,10 @@ function administration.get_nsfw_keyboard(chat_id)
     table.insert(keyboard.inline_keyboard, {
         {['text'] = '-', ['callback_data'] = 'administration:'..chat_id..':nsfw:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)-10)},
         {['text'] = (mattata.get_setting(chat_id, 'nsfw limit') or 80).."%", ['callback_data'] = 'administration:' .. chat_id .. ':nsfw:help'},
-        {['text'] = '-', ['callback_data'] = 'administration:'..chat_id..':nsfw:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)}
+        {['text'] = '+', ['callback_data'] = 'administration:'..chat_id..':nsfw:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)}
     })
     table.insert(keyboard.inline_keyboard, {
-        {['text'] = 'Delete NSFW Images?', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
+        {['text'] = 'Delete NSFW Images?', ['callback_data'] = 'administration:'..chat_id..':nsfw:help_delete'},
         {['text'] = mattata.get_setting(chat_id, 'nsfw delete') and "🗑"..utf8.char(9989) or "🗑"..utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:delete'}
     })
     table.insert(keyboard.inline_keyboard, {
@@ -890,6 +890,18 @@ function administration:on_callback_query(callback_query, message, configuration
             mattata.answer_callback_query(
                 callback_query.id,
                 'Choose a number between 0 and 100 to set the NotSafetyForWork filter. Every image will be passed through the filter, and if this chance is bigger I will ban the user.',
+                true
+            )
+        elseif action == "help_general" then
+            mattata.answer_callback_query(
+                callback_query.id,
+                'NotSafetyForWork: Used to describe Internet content generally inappropriate for the typical workplace, i.e., would not be acceptable in the presence of your boss and colleagues (as opposed to SFW, Safe For Work).',
+                true
+            )
+        elseif action == "help_delete" then
+            mattata.answer_callback_query(
+                callback_query.id,
+                'If I detect an image with a NSFW chance bigger than the setting I will delete it.',
                 true
             )
         elseif action == "toggle" then
