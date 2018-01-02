@@ -143,7 +143,7 @@ function administration.get_initial_keyboard(chat_id, page)
                 'administration:' .. chat_id .. ':nsfw:2:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)
             )
             :callback_data_button(
-                mattata.get_setting(chat_id, 'nsfw limit'),
+                (mattata.get_setting(chat_id, 'nsfw limit') or 80),
                 'administration:' .. chat_id .. ':nsfw:2:help'
             )
             :callback_data_button(
