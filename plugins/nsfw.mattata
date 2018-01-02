@@ -35,7 +35,14 @@ function nsfw.detect(message, key, url, type)
     local json_data = nsfw.request(key, "detect", url)
     if type == "plugin" then
         if json_data and json_data.result == "ok" then
-            return mattata.send_message(message.chat.id, "This photo has a chance of <b>" .. mattata.round((json_data.content.score)*100, 2) .. "%</b> to contain <i>NonSafetyForWork content</i>", 'html', false, false, message.reply.message_id)
+            return mattata.send_message(
+                message.chat.id,
+                "This photo has a chance of <b>" .. mattata.round((json_data.content.score)*100, 2) .. "%</b> to contain NonSafetyForWork content"..(mattata.round((json_data.content.score)*100, 2)<20 and "\n<i>Probably it's a safe image</i>" or (mattata.round((json_data.content.score)*100, 2)>80 and "<i>It's more than likely to contain some type of NSFW content!</i>" or "")),
+                'html',
+                false,
+                false,
+                message.reply.message_id
+            )
         else
             return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
         end
