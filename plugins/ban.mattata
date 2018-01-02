@@ -27,9 +27,7 @@ function ban:on_callback_query(callback_query, message, configuration, language)
             'You\'re not an administrator in that chat!'
         )
     end
-
     local chat_id, user = callback_query.data:match('^(%-%d+):(%d+)')
-    print(chat_id .. " - " .. user)
 
     local success = mattata.get_user(user)
     if not success then
