@@ -903,7 +903,7 @@ function administration:on_callback_query(callback_query, message, configuration
                 'nsfw delete'
             )
         else
-            if tonumber(action) ~= nil then
+            if tonumber(action) == nil then
                 redis:hset(
                     'chat:' .. chat_id .. ':settings',
                     'nsfw limit',
