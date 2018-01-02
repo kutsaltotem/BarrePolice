@@ -475,15 +475,17 @@ function administration.get_nsfw_keyboard(chat_id)
         {['text'] = 'Filter Enabled?', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
         {['text'] = mattata.get_setting(chat_id, 'nsfw enabled') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:toggle'},
     })
+    if mattata.get_setting(chat_id, 'nsfw enabled') then
     table.insert(keyboard.inline_keyboard, {
-        {['text'] = '-', ['callback_data'] = 'administration:'..chat_id..':nsfw:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)-10)},
-        {['text'] = (mattata.get_setting(chat_id, 'nsfw limit') or 80).."%", ['callback_data'] = 'administration:' .. chat_id .. ':nsfw:help'},
-        {['text'] = '+', ['callback_data'] = 'administration:'..chat_id..':nsfw:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)}
-    })
-    table.insert(keyboard.inline_keyboard, {
-        {['text'] = 'Delete NSFW Images?', ['callback_data'] = 'administration:'..chat_id..':nsfw:help_delete'},
-        {['text'] = mattata.get_setting(chat_id, 'nsfw delete') and "🗑"..utf8.char(9989) or "🗑"..utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:delete'}
-    })
+            {['text'] = '-', ['callback_data'] = 'administration:'..chat_id..':nsfw:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)-10)},
+            {['text'] = (mattata.get_setting(chat_id, 'nsfw limit') or 80).."%", ['callback_data'] = 'administration:' .. chat_id .. ':nsfw:help'},
+            {['text'] = '+', ['callback_data'] = 'administration:'..chat_id..':nsfw:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)}
+        })
+        table.insert(keyboard.inline_keyboard, {
+            {['text'] = 'Delete NSFW Images?', ['callback_data'] = 'administration:'..chat_id..':nsfw:help_delete'},
+            {['text'] = mattata.get_setting(chat_id, 'nsfw delete') and "🗑"..utf8.char(9989) or "🗑"..utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:delete'}
+        })
+    end
     table.insert(keyboard.inline_keyboard, {
         {['text'] = 'Back', ['callback_data'] = 'administration:' .. chat_id .. ':page:2'}
     })
