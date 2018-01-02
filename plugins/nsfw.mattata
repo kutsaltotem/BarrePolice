@@ -56,7 +56,7 @@ function nsfw:on_message(message, configuration, language)
             if json_data and json_data.result == "ok" then
                 return mattata.send_reply(message, "That photo has a chance of <b>" .. (json_data.content.message)*100 .. "%</b> to contain <i>NonSafetyForWork content</i>")
             else
-                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.message.."</code>")
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>")
             end
         elseif message.reply.photo then
             local file = mattata.get_file(message.reply.photo[#message.reply.photo].file_id)
