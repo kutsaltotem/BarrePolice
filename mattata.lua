@@ -524,7 +524,7 @@ function mattata:process_plugin_extras()
     if message.type ~= "private" and mattata.get_setting(message.chat.id, 'use administration') and mattata.get_setting(message.chat.id, 'nsfw enabled') and (message.photo or (message.document and message.document.mime_type:match('^image/%a*'))) then
         if mattata.is_trusted_user(message.chat.id, message.from.id) and mattata.get_setting(message.chat.id, 'trusted permissions nsfw') then else
             local max_chance = mattata.get_setting(chat_id, 'nsfw limit') or 80
-            local file = mattata.get_file(message.photo[#message.reply.photo].file_id) or mattata.get_file(message.document.file_id)
+            local file = mattata.get_file(message.photo[#message.photo].file_id) or mattata.get_file(message.document.file_id)
             if not file then return false end
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
             local nsfw = dofile('plugins/nsfw.mattata')
