@@ -42,7 +42,7 @@ function nsfw:on_message(message, configuration, language)
             mattata.send_reply(message, "I've sent you the key in a private message. Remember to start me before.")
         end
         if json_data and json_data.result == "ok" then
-            return mattata.send_message(message.from.id, "Your API key is <code>" .. json_data.content.api_key .. "</code>\nIf you need a new one, contact <a href='https://t.me/Barreeeiroo'>@Barreeeiroo</a>", 'html')
+            return mattata.send_message(message.from.id, "Your <b>API key</b> is <code>" .. json_data.content.api_key .. "</code>\n\n<i>If you need a new one, contact</i> <a href='https://t.me/Barreeeiroo'>@Barreeeiroo</a>", 'html')
         else
             return mattata.send_reply(message, language['errors']['generic'])
         end
