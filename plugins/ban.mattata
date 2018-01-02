@@ -29,6 +29,7 @@ function ban:on_callback_query(callback_query, message, configuration, language)
     end
 
     local chat_id, user = callback_query.data:match('^(%-%d+):(s)')
+    print(chat_id .. " - " .. user)
 
     local success = mattata.get_user(user)
     if not success then
