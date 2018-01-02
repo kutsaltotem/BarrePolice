@@ -142,10 +142,7 @@ function administration.get_initial_keyboard(chat_id, page)
                 '+',
                 'administration:' .. chat_id .. ':nsfw:2:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)
             )
-            :callback_data_button(
-                (mattata.get_setting(chat_id, 'nsfw limit') or 80),
-                'administration:' .. chat_id .. ':nsfw:2:help'
-            )
+            :callback_data_button((mattata.get_setting(chat_id, 'nsfw limit') or 80), 'administration:' .. chat_id .. ':nsfw:2:help')
             :callback_data_button(
                 '-',
                 'administration:' .. chat_id .. ':nsfw:2:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)-10)
@@ -878,7 +875,8 @@ function administration:on_callback_query(callback_query, message, configuration
         if action == "help" then
             mattata.answer_callback_query(
                 callback_query.id,
-                'Choose a number between 0 and 100 to set the NonSafetyForWork filter. Every image will be passed through the filter, and if this chance is bigger I will ban the user.'
+                'Choose a number between 0 and 100 to set the NonSafetyForWork filter. Every image will be passed through the filter, and if this chance is bigger I will ban the user.',
+                true
             )
         elseif action == "toggle" then
             mattata.toggle_setting(
@@ -898,12 +896,13 @@ function administration:on_callback_query(callback_query, message, configuration
                     callback_query.id,
                     'The minimum chance of NSFW is 0%.'
                 )
+            elseif tonumber(action) ~= nil then
+                redis:hset(
+                    'chat:' .. chat_id .. ':settings',
+                    'nsfw limit',
+                    tonumber(action)
+                )
             end
-            redis:hset(
-                'chat:' .. chat_id .. ':settings',
-                'nsfw limit',
-                tonumber(action)
-            )
         end
         if page then
             keyboard = administration.get_initial_keyboard(chat_id, page)
