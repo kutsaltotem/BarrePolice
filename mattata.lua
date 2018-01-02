@@ -530,14 +530,14 @@ function mattata:process_plugin_extras()
             local nsfw = dofile('plugins/nsfw.mattata')
             local response = nsfw.detect(message, configuration.keys.nsfw, request_url, "core")
             if response and response.result == "ok" then
-                if ((json_data.content.score)*100) > max_chance then
+                if ((response.content.score)*100) > max_chance then
                     if mattata.get_setting(message.chat.id, 'nsfw delete') then
                         mattata.delete_message(message.chat.id, message.message_id)
                     end
                     local action = mattata.get_setting(message.chat.id, 'ban not kick') and mattata.ban_chat_member or mattata.kick_chat_member
                     local success = action(message.chat.id, message.from.id)
                     if success then
-                        if mattata.get_setting(message.chat.id, 'log administrative actions') and mattata.get_setting(message.chat.id, 'log wordfilter') then
+                        if mattata.get_setting(message.chat.id, 'log administrative actions') and mattata.get_setting(message.chat.id, 'log nsfw') then
                             local log_chat = mattata.get_log_chat(message.chat.id)
                             mattata.send_message(log_chat, string.format('#action #nsfw #admin_'..self.info.id..' #user_'..message.from.id..' #group_'..tostring(message.chat.id):gsub("%-", "")..'\n\n<pre>%s [%s] has kicked %s [%s] from %s [%s] for a NSFW image.</pre>', mattata.escape_html(self.info.first_name), self.info.id, mattata.escape_html(message.from.first_name), message.from.id, mattata.escape_html(message.chat.title), message.chat.id), 'html')
                         end

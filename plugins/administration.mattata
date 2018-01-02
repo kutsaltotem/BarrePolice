@@ -447,6 +447,10 @@ function administration.get_logchat_settings(chat_id)
         {['text'] = mattata.get_setting(chat_id, 'log antirtl') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:' .. chat_id .. ':log:antirtl'}
     })
     table.insert(keyboard.inline_keyboard, {
+        {['text'] = 'NSFW Trigger', ['callback_data'] = 'administration:nil'},
+        {['text'] = mattata.get_setting(chat_id, 'log nsfw') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:' .. chat_id .. ':log:nsfw'}
+    })
+    table.insert(keyboard.inline_keyboard, {
         {['text'] = 'Muteall Group', ['callback_data'] = 'administration:nil'},
         {['text'] = mattata.get_setting(chat_id, 'log muteall') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:' .. chat_id .. ':log:muteall'},
         {['text'] = 'Unmuteall Group', ['callback_data'] = 'administration:nil'},
