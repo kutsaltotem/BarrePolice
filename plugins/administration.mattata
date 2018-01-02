@@ -869,9 +869,9 @@ function administration:on_callback_query(callback_query, message, configuration
         if page then
             keyboard = administration.get_initial_keyboard(chat_id, page)
         end
-    elseif callback_query.data:match('^%-%d+:nsfw:%d*:%w*$')
+    elseif callback_query.data:match('^%-%d+:nsfw:%d*:?-%w*$')
     then
-        local chat_id, page, action = callback_query.data:match('^(%-%d+):nsfw:(%d*):(%w*)$')
+        local chat_id, page, action = callback_query.data:match('^(%-%d+):nsfw:(%d*):(-?%w*)$')
         if action == "help" then
             mattata.answer_callback_query(
                 callback_query.id,
@@ -884,7 +884,6 @@ function administration:on_callback_query(callback_query, message, configuration
                 'nsfw enabled'
             )
         else
-            print(action)
             if tonumber(action) > 100
             then
                 mattata.answer_callback_query(
