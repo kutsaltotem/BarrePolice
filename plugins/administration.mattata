@@ -895,7 +895,7 @@ function administration:on_callback_query(callback_query, message, configuration
         if action == "help" then
             mattata.answer_callback_query(
                 callback_query.id,
-                'Choose a number between 0 and 100 to set the NotSafetyForWork filter. Every image will be passed through the filter, and if this chance is bigger I will ban the user.',
+                'Choose a number between 0 and 100 to set the NotSafetyForWork filter. Every image will be passed through the filter, and if this chance is bigger I will kick or ban the user, depending on your settings.',
                 true
             )
         elseif action == "help_general" then
