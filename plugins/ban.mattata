@@ -13,7 +13,7 @@ function ban:init()
     ban.help = '/ban [user] - Bans a user from the current chat. This command can only be used by moderators and administrators of a supergroup. Alias: /b'
 end
 
-function ban:on_callback_query(callback_query, message, configuration)
+function ban:on_callback_query(callback_query, message, configuration, language)
     if callback_query.data == 'nil'
     then
         return mattata.answer_callback_query(callback_query.id)
