@@ -137,6 +137,26 @@ function administration.get_initial_keyboard(chat_id, page)
         )
         :row(
             mattata.row()
+            :callback_data_button('NSFW Filter', 'administration:' .. chat_id .. ':nsfw:2:help')
+            :callback_data_button(
+                '+',
+                'administration:' .. chat_id .. ':nsfw:2:' .. math.floor(mattata.get_setting(chat_id, 'nsfw limit')+10)
+            )
+            :callback_data_button(
+                mattata.get_setting(chat_id, 'nsfw limit'),
+                'administration:' .. chat_id .. ':nsfw:2:help'
+            )
+            :callback_data_button(
+                '-',
+                'administration:' .. chat_id .. ':nsfw:2:' .. math.floor(mattata.get_setting(chat_id, 'nsfw limit')-10)
+            )
+            :callback_data_button(
+                mattata.get_setting(chat_id, 'nsfw enabled') and utf8.char(9989) or utf8.char(10060),
+                'administration:' .. chat_id .. ':nsfw:2:toggle'
+            )
+        )
+        :row(
+            mattata.row()
             :callback_data_button('Back', 'administration:' .. chat_id .. ':page:1')
             :callback_data_button('Next', 'administration:' .. chat_id .. ':page:3')
         )
@@ -849,6 +869,42 @@ function administration:on_callback_query(callback_query, message, configuration
             chat_id,
             'force group language'
         )
+        if page then
+            keyboard = administration.get_initial_keyboard(chat_id, page)
+        end
+    elseif callback_query.data:match('^%-%d+:nsfw:%d*:%a*$')
+    then
+        local chat_id, page, action = callback_query.data:match('^(%-%d+):nsfw:(%d*):(%a*)$')
+        if action == "help" then
+            mattata.answer_callback_query(
+                callback_query.id,
+                'Choose a number between 0 and 100 to set the NonSafetyForWork filter. Every image will be passed through the filter, and if this chance is bigger I will ban the user.'
+            )
+        elseif action = "toggle" then
+            mattata.toggle_setting(
+                chat_id,
+                'nsfw enabled'
+            )
+        else
+            if tonumber(action) > "100"
+            then
+                mattata.answer_callback_query(
+                    callback_query.id,
+                    'The maximum chance of NSFW is 100%.'
+                )
+            elseif tonumber(action) < "0"
+            then
+                mattata.answer_callback_query(
+                    callback_query.id,
+                    'The minimum chance of NSFW is 0%.'
+                )
+            end
+            redis:hset(
+                'chat:' .. chat_id .. ':settings',
+                'nsfw limit',
+                tonumber(action)
+            )
+        end
         if page then
             keyboard = administration.get_initial_keyboard(chat_id, page)
         end
