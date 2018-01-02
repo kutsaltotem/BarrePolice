@@ -142,7 +142,7 @@ function administration.get_initial_keyboard(chat_id, page)
                 '-',
                 'administration:' .. chat_id .. ':nsfw:2:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)-10)
             )
-            :callback_data_button((mattata.get_setting(chat_id, 'nsfw limit') or 80), 'administration:' .. chat_id .. ':nsfw:2:help')
+            :callback_data_button((mattata.get_setting(chat_id, 'nsfw limit') or 80).."%", 'administration:' .. chat_id .. ':nsfw:2:help')
             :callback_data_button(
                 '+',
                 'administration:' .. chat_id .. ':nsfw:2:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)
@@ -885,13 +885,13 @@ function administration:on_callback_query(callback_query, message, configuration
             )
         else
             print(action)
-            if tonumber(action) > "100"
+            if tonumber(action) > 100
             then
                 mattata.answer_callback_query(
                     callback_query.id,
                     'The maximum chance of NSFW is 100%.'
                 )
-            elseif tonumber(action) < "0"
+            elseif tonumber(action) < 0
             then
                 mattata.answer_callback_query(
                     callback_query.id,
