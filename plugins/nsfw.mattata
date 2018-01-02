@@ -22,10 +22,10 @@ end
 function nsfw.request(key, input, content)
     local headers = {auth = key}
     if input == "generate" then
-        response = requests.get{url = 'http://api.nsfw.thunkable.ga/key?id='..content, headers = headers}
+        response = requests.get{url = 'http://nsfw.api.thunkable.ga/key?id='..content, headers = headers}
         return response.json()
     elseif input == "detect" then
-        response = requests.get{url = 'http://api.nsfw.thunkable.ga/?img='..content, headers = headers}
+        response = requests.get{url = 'http://nsfw.api.thunkable.ga/?img='..content, headers = headers}
         return response.json()
     end
 end
@@ -41,7 +41,7 @@ function nsfw:on_message(message, configuration, language)
         if message.chat.id ~= message.from.id then
             mattata.send_reply(message, "I've sent you the key in a private message. Remember to start me before.")
         end
-        if json_data.result == "ok" then
+        if json_data and json_data.result == "ok" then
             return mattata.send_message(message.from.id, "Your API key is <code>" .. json_data.content.api_key .. "</code>\nIf you need a new one, contact <a href='https://t.me/Barreeeiroo'>@Barreeeiroo</a>")
         else
             return mattata.send_reply(message, language['errors']['generic'])
