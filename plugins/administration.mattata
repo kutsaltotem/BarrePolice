@@ -884,6 +884,7 @@ function administration:on_callback_query(callback_query, message, configuration
                 'nsfw enabled'
             )
         else
+            print(action)
             if tonumber(action) > "100"
             then
                 mattata.answer_callback_query(
