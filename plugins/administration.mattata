@@ -869,7 +869,7 @@ function administration:on_callback_query(callback_query, message, configuration
         if page then
             keyboard = administration.get_initial_keyboard(chat_id, page)
         end
-    elseif callback_query.data:match('^%-%d+:nsfw:%d*:?-%w*$')
+    elseif callback_query.data:match('^%-%d+:nsfw:%d*:-?%w*$')
     then
         local chat_id, page, action = callback_query.data:match('^(%-%d+):nsfw:(%d*):(-?%w*)$')
         if action == "help" then
