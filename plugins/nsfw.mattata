@@ -48,8 +48,8 @@ function nsfw:on_message(message, configuration, language)
             return mattata.send_reply(message, language['errors']['generic'])
         end
     elseif message.reply then
-        if message.reply.document and message.reply.document.mime_type:match('^image/%a*') then
-            local file = mattata.get_file(message.reply.document.file_id)
+        if message.reply.photo then
+            local file = mattata.get_file(message.reply.photo[#message.reply.photo].file_id)
             if not file then return false end
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
             local json_data = nsfw.request(configuration.keys.nsfw, "detect", request_url)
@@ -58,8 +58,8 @@ function nsfw:on_message(message, configuration, language)
             else
                 return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
             end
-        elseif message.reply.photo then
-            local file = mattata.get_file(message.reply.photo[#message.reply.photo].file_id)
+        elseif message.reply.document and message.reply.document.mime_type:match('^image/%a*') then
+            local file = mattata.get_file(message.reply.document.file_id)
             if not file then return false end
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
             local json_data = nsfw.request(configuration.keys.nsfw, "detect", request_url)
