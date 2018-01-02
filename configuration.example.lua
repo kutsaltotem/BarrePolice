@@ -83,6 +83,7 @@ return { -- Rename this file to configuration.lua for the bot to work!
         ['twitch'] = '', -- https://twitchapps.com/tmi/
         ['pastebin'] = '', -- https://pastebin.com/api
         -- ['mashape'] = '', -- https://market.mashape.com/sphirelabs/advanced-porn-nudity-and-adult-content-detection
+        ['nsfw'] = '', -- https://t.me/BarrePolice_Bot && /nsfw key
         ['dictionary'] = {  -- https://developer.oxforddictionaries.com/
             ['id'] = '',
             ['key'] = ''
