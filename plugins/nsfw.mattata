@@ -54,9 +54,9 @@ function nsfw:on_message(message, configuration, language)
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
             local json_data = nsfw.request(configuration.keys.nsfw, "detect", request_url)
             if json_data and json_data.result == "ok" then
-                return mattata.send_reply(message, "That photo has a chance of <b>" .. (json_data.content.score)*100 .. "%</b> to contain <i>NonSafetyForWork content</i>", 'markdown')
+                return mattata.send_reply(message, "That photo has a chance of <b>" .. mattata.round((json_data.content.score)*100, 3) .. "%</b> to contain <i>NonSafetyForWork content</i>", 'html')
             else
-                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'markdown')
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
             end
         elseif message.reply.photo then
             local file = mattata.get_file(message.reply.photo[#message.reply.photo].file_id)
