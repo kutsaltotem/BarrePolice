@@ -20,23 +20,24 @@ function nsfw:init(configuration)
 end
 
 function nsfw.request(key, input, content)
-    local headers = {auth = key}
     if input == "generate" then
+        local headers = {auth = key}
         response = requests.get{url = 'http://nsfw.api.thunkable.ga/key?id='..content, headers = headers}
         return response.json()
     elseif input == "detect" then
-        response = requests.get{url = 'http://nsfw.api.thunkable.ga/?img='..content, headers = headers}
+        local headers = {auth = key, image = content}
+        response = requests.get{url = 'http://nsfw.api.thunkable.ga/', headers = headers}
         return response.json()
     end
 end
 
 function nsfw:on_message(message, configuration, language)
-    local input = mattata.input(message.text) or message.reply
+    local input = mattata.input(message.text)
     if not input then
         return mattata.send_reply(message, nsfw.help)
     end
 
-    if input:match('^key') then
+    if input:match('^key') and  then
         local json_data = nsfw.request(configuration.keys.nsfw, "generate", message.from.id)
         if message.chat.id ~= message.from.id then
             mattata.send_reply(message, "I've sent you the key in a private message. Remember to start me before.")
@@ -45,6 +46,30 @@ function nsfw:on_message(message, configuration, language)
             return mattata.send_message(message.from.id, "Your <b>API key</b> is <code>" .. json_data.content.api_key .. "</code>\n\n<i>If you need a new one, contact</i> <a href='https://t.me/Barreeeiroo'>@Barreeeiroo</a>", 'html')
         else
             return mattata.send_reply(message, language['errors']['generic'])
+        end
+    elseif message.reply then
+        if message.reply.document and message.reply.document.mime_type:match('^image/%a*') then
+            local file = mattata.get_file(message.reply.document.file_id)
+            if not file then return false end
+            local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
+            local json_data = nsfw.request(configuration.keys.nsfw, "detect", request_url)
+            if json_data and json_data.result == "ok" then
+                return mattata.send_reply(message, "That photo has a chance of <b>" .. (json_data.content.message)*100 .. "%</b> to contain <i>NonSafetyForWork content</i>")
+            else
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.message.."</code>")
+            end
+        elseif message.reply.photo then
+            local file = mattata.get_file(message.reply.photo[#message.reply.photo].file_id)
+            if not file then return false end
+            local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
+            local json_data = nsfw.request(configuration.keys.nsfw, "detect", request_url)
+            if json_data and json_data.result == "ok" then
+                return mattata.send_reply(message, "That photo has a chance of <b>" .. (json_data.content.message)*100 .. "%</b> to contain <i>NonSafetyForWork content</i>")
+            else
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.message.."</code>")
+            end
+        else
+            return mattata.send_reply(message, "I can only detect NSFW content from images!")
         end
     else
         return mattata.send_reply(message, nsfw.help)
