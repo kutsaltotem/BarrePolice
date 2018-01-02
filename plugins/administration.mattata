@@ -903,7 +903,13 @@ function administration:on_callback_query(callback_query, message, configuration
                 'nsfw delete'
             )
         else
-            if tonumber(action) > 100
+            if tonumber(action) ~= nil then
+                redis:hset(
+                    'chat:' .. chat_id .. ':settings',
+                    'nsfw limit',
+                    tonumber(action)
+                )
+            elseif tonumber(action) > 100
             then
                 mattata.answer_callback_query(
                     callback_query.id,
@@ -914,12 +920,6 @@ function administration:on_callback_query(callback_query, message, configuration
                 mattata.answer_callback_query(
                     callback_query.id,
                     'The minimum chance of NSFW is 0%.'
-                )
-            elseif tonumber(action) ~= nil then
-                redis:hset(
-                    'chat:' .. chat_id .. ':settings',
-                    'nsfw limit',
-                    tonumber(action)
                 )
             end
         end
