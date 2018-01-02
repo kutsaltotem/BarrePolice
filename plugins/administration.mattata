@@ -880,7 +880,7 @@ function administration:on_callback_query(callback_query, message, configuration
                 callback_query.id,
                 'Choose a number between 0 and 100 to set the NonSafetyForWork filter. Every image will be passed through the filter, and if this chance is bigger I will ban the user.'
             )
-        elseif action = "toggle" then
+        elseif action == "toggle" then
             mattata.toggle_setting(
                 chat_id,
                 'nsfw enabled'
