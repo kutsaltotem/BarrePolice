@@ -139,13 +139,13 @@ function administration.get_initial_keyboard(chat_id, page)
             mattata.row()
             :callback_data_button('NSFW Filter', 'administration:' .. chat_id .. ':nsfw:2:help')
             :callback_data_button(
-                '+',
-                'administration:' .. chat_id .. ':nsfw:2:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)
+                '-',
+                'administration:' .. chat_id .. ':nsfw:2:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)-10)
             )
             :callback_data_button((mattata.get_setting(chat_id, 'nsfw limit') or 80), 'administration:' .. chat_id .. ':nsfw:2:help')
             :callback_data_button(
-                '-',
-                'administration:' .. chat_id .. ':nsfw:2:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)-10)
+                '+',
+                'administration:' .. chat_id .. ':nsfw:2:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)
             )
             :callback_data_button(
                 mattata.get_setting(chat_id, 'nsfw enabled') and utf8.char(9989) or utf8.char(10060),
@@ -869,9 +869,9 @@ function administration:on_callback_query(callback_query, message, configuration
         if page then
             keyboard = administration.get_initial_keyboard(chat_id, page)
         end
-    elseif callback_query.data:match('^%-%d+:nsfw:%d*:%a*$')
+    elseif callback_query.data:match('^%-%d+:nsfw:%d*:%w*$')
     then
-        local chat_id, page, action = callback_query.data:match('^(%-%d+):nsfw:(%d*):(%a*)$')
+        local chat_id, page, action = callback_query.data:match('^(%-%d+):nsfw:(%d*):(%w*)$')
         if action == "help" then
             mattata.answer_callback_query(
                 callback_query.id,
