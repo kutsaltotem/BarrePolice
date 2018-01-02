@@ -37,7 +37,7 @@ function nsfw:on_message(message, configuration, language)
         return mattata.send_reply(message, nsfw.help)
     end
 
-    if input:match('^key') and  then
+    if input:match('^key')  then
         local json_data = nsfw.request(configuration.keys.nsfw, "generate", message.from.id)
         if message.chat.id ~= message.from.id then
             mattata.send_reply(message, "I've sent you the key in a private message. Remember to start me before.")
