@@ -1,0 +1,54 @@
+--[[
+    Copyright 2017 Diego Barreiro <diego@makeroid.io>
+    This code is licensed under the MIT. See LICENSE for details.
+]]
+
+local nsfw = {}
+local mattata = require('mattata')
+local requests = require('requests')
+local url = require('socket.url')
+local json = require('dkjson')
+
+function nsfw:init(configuration)
+    assert(
+        configuration.keys.nsfw,
+        'nsfw.lua requires an API key, and you haven\'t got one configured!'
+    )
+    nsfw.commands = mattata.commands(self.info.username)
+    :command('nsfw').table
+    nsfw.help = '/nsfw - In reply to an image, will detect if it\'s SFW or not.\n/nsfw key - Generate an API key for you'
+end
+
+function nsfw.request(key, input, content)
+    local headers = {auth = key}
+    if input == "generate" then
+        response = requests.get{url = 'http://api.nsfw.thunkable.ga/key?id='..content, headers = headers}
+        return response.json()
+    elseif input == "detect" then
+        response = requests.get{url = 'http://api.nsfw.thunkable.ga/?img='..content, headers = headers}
+        return response.json()
+    end
+end
+
+function nsfw:on_message(message, configuration, language)
+    local input = mattata.input(message.text) or message.reply
+    if not input then
+        return mattata.send_reply(message, nsfw.help)
+    end
+
+    if input:match('^key') then
+        local json_data = nsfw.request(configuration.keys.nsfw, "generate", message.from.id)
+        if message.chat.id ~= message.from.id then
+            mattata.send_reply(message, "I've sent you the key in a private message. Remember to start me before.")
+        end
+        if json_data.result = "ok" then
+            return mattata.send_message(message.from.id, "Your API key is <code>" .. json_data.content.api_key .. "</code>\nIf you need a new one, contact <a href='https://t.me/Barreeeiroo'>@Barreeeiroo</a>")
+        else
+            return mattata.send_reply(message, language['errors']['generic'])
+        end
+    else
+        return mattata.send_reply(message, nsfw.help)
+    end
+end
+
+return nsfw
