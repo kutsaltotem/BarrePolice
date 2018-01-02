@@ -532,7 +532,7 @@ function mattata:process_plugin_extras()
             if response and response.result == "ok" then
                 print(response.content.score*100)
                 print(max_chance)
-                if ((response.content.score)*100) > max_chance then
+                if ((response.content.score)*100) > tonumber(max_chance) then
                     if mattata.get_setting(message.chat.id, 'nsfw delete') then
                         mattata.delete_message(message.chat.id, message.message_id)
                     end
