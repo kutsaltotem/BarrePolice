@@ -86,7 +86,7 @@ function nsfw:on_message(message, configuration, language)
                     message.reply.message_id
                 )
             else
-                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"json_data.content.code.." | "..json_data.content.message.."</code>", 'html')
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.." | "..json_data.content.message.."</code>", 'html')
             end
         else
             return mattata.send_reply(message, "I can only detect NSFW content from images and sticker!")
