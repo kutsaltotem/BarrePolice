@@ -73,7 +73,7 @@ function nsfw:on_message(message, configuration, language)
             end
         elseif message.reply.video or (message.reply.document and message.reply.document.mime_type:match('^video/%a*')) then
             local file
-            if (message.reply.video and message.reply.video.duration > 10) or (message.reply.document and message.reply.document.duration > 10 and not message.reply.document.giphy.mp4) then
+            if (message.reply.video and message.reply.video.duration > 10) or (message.reply.document and not message.reply.document.file_name == "giphy.mp4" and message.reply.document.duration > 10) then
                 file = mattata.get_file(message.reply.video and message.reply.video.file_id or (message.reply.document and message.reply.document.file_id))
             else
                 file = mattata.get_file(message.reply.video and message.reply.video.thumb.file_id or (message.reply.document and message.reply.document.thumb.file_id))
