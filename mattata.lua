@@ -1298,32 +1298,6 @@ function mattata.process_deeplinks(message)
     end
 end
 
---[[ function mattata.isX(imageUrl)
-   local api_key = configuration.keys.mashape
-   if isempty(api_key) then
-      return nil, 'Configure your Mashape API Key'
-   end
-
-   local api = "https://sphirelabs-advanced-porn-nudity-and-adult-content-detection.p.mashape.com/v1/get/index.php"
-   local parameters = "?url="..(URL.escape(imageUrl) or "")
-   local url = api..parameters
-   local respbody = {}
-   local headers = {
-      ["X-Mashape-Key"] = api_key,
-      ["Accept"] = "Accept: application/json"
-   }
-   local body, code, headers, status = https.request{
-      url = url,
-      method = "GET",
-      headers = headers,
-      sink = ltn12.sink.table(respbody),
-      protocol = "tlsv1"
-   }
-   if code ~= 200 then return "", code end
-   local body = table.concat(respbody)
-   return body, code
-end ]]
-
 function mattata:process_message()
     local message = self.message
     local language = self.language
