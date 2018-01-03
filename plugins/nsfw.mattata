@@ -84,7 +84,7 @@ function nsfw:on_message(message, configuration, language)
             if json_data and json_data.result == "ok" then
                 return mattata.send_message(
                     message.chat.id,
-                    "This video has a chance of <b>" .. mattata.round((json_data.content.avg or json_data.content.score)*100, 2) .. "%</b> to contain NonSafetyForWork content" ..  (json_data.content.avg and "\n<i>Maximum Score Found:</i> <code>" .. mattata.round((json_data.content.highest)*100, 2) .. "</code>\n<i>Minimum Score Found:</i> <code>" .. mattata.round((json_data.content.lowest)*100, 2) .. "</code>" or "") ..(mattata.round((json_data.content.avg)*100, 2)<20 and "\n\n<i>Probably it's a safe image</i>" or (mattata.round((json_data.content.avg)*100, 2)>80 and "\n<i>It's more than likely to contain some type of NSFW content!</i>" or "")),
+                    "This video has a chance of <b>" .. mattata.round((json_data.content.avg or json_data.content.score)*100, 2) .. "%</b> to contain NonSafetyForWork content" ..  (json_data.content.avg and "\n<i>Maximum Score Found:</i> <code>" .. mattata.round((json_data.content.highest)*100, 2) .. "</code>\n<i>Minimum Score Found:</i> <code>" .. mattata.round((json_data.content.lowest)*100, 2) .. "</code>" or "") ..(mattata.round((json_data.content.avg or json_data.content.score)*100, 2)<20 and "\n\n<i>Probably it's a safe image</i>" or (mattata.round((json_data.content.avg or json_data.content.score)*100, 2)>80 and "\n<i>It's more than likely to contain some type of NSFW content!</i>" or "")),
                     'html',
                     false,
                     false,
