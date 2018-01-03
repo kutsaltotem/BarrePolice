@@ -495,12 +495,12 @@ function administration.get_nsfw_keyboard(chat_id)
         })
         table.insert(keyboard.inline_keyboard, {
             {['text'] = 'Detect GIFs', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
-            {['text'] = mattata.get_setting(chat_id, 'nsfw type gifs'):gsub("^%l", string.upper) or "Avg", ['callback_data'] = 'administration:'..chat_id..':nsfw:type_gifs'},
+            {['text'] = (mattata.get_setting(chat_id, 'nsfw type gifs') or "avg"):gsub("^%l", string.upper), ['callback_data'] = 'administration:'..chat_id..':nsfw:type_gifs'},
             {['text'] = mattata.get_setting(chat_id, 'nsfw gifs') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:gifs'}
         })
         table.insert(keyboard.inline_keyboard, {
             {['text'] = 'Detect Videos', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
-            {['text'] = mattata.get_setting(chat_id, 'nsfw type videos'):gsub("^%l", string.upper) or "Avg", ['callback_data'] = 'administration:'..chat_id..':nsfw:type_videos'},
+            {['text'] = (mattata.get_setting(chat_id, 'nsfw type videos') or "avg"):gsub("^%l", string.upper), ['callback_data'] = 'administration:'..chat_id..':nsfw:type_videos'},
             {['text'] = mattata.get_setting(chat_id, 'nsfw videos') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:videos'}
         })
         table.insert(keyboard.inline_keyboard, {
