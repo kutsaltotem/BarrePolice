@@ -480,10 +480,28 @@ function administration.get_nsfw_keyboard(chat_id)
         {['text'] = mattata.get_setting(chat_id, 'nsfw enabled') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:toggle'},
     })
     if mattata.get_setting(chat_id, 'nsfw enabled') then
-    table.insert(keyboard.inline_keyboard, {
+        table.insert(keyboard.inline_keyboard, {
             {['text'] = '-', ['callback_data'] = 'administration:'..chat_id..':nsfw:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)-10)},
             {['text'] = (mattata.get_setting(chat_id, 'nsfw limit') or 80).."%", ['callback_data'] = 'administration:' .. chat_id .. ':nsfw:help'},
             {['text'] = '+', ['callback_data'] = 'administration:'..chat_id..':nsfw:' .. math.floor((mattata.get_setting(chat_id, 'nsfw limit') or 80)+10)}
+        })
+        table.insert(keyboard.inline_keyboard, {
+            {['text'] = 'Detect Images', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
+            {['text'] = mattata.get_setting(chat_id, 'nsfw images') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:images'}
+        })
+        table.insert(keyboard.inline_keyboard, {
+            {['text'] = 'Detect Stickers', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
+            {['text'] = mattata.get_setting(chat_id, 'nsfw stickers') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:stickers'}
+        })
+        table.insert(keyboard.inline_keyboard, {
+            {['text'] = 'Detect GIFs', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
+            {['text'] = mattata.get_setting(chat_id, 'nsfw type gifs'):gsub("^%l", string.upper) or "Avg", ['callback_data'] = 'administration:'..chat_id..':nsfw:type_gifs'},
+            {['text'] = mattata.get_setting(chat_id, 'nsfw gifs') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:gifs'}
+        })
+        table.insert(keyboard.inline_keyboard, {
+            {['text'] = 'Detect Videos', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
+            {['text'] = mattata.get_setting(chat_id, 'nsfw type videos'):gsub("^%l", string.upper) or "Avg", ['callback_data'] = 'administration:'..chat_id..':nsfw:type_videos'},
+            {['text'] = mattata.get_setting(chat_id, 'nsfw videos') and utf8.char(9989) or utf8.char(10060), ['callback_data'] = 'administration:'..chat_id..':nsfw:videos'}
         })
         table.insert(keyboard.inline_keyboard, {
             {['text'] = 'Delete NSFW Images?', ['callback_data'] = 'administration:'..chat_id..':nsfw:help_delete'},
@@ -940,6 +958,17 @@ function administration:on_callback_query(callback_query, message, configuration
                     tonumber(action)
                 )
             end
+        elseif action:match('^type_%a*$') then
+            local type = action:match('^type_(%a*)$')
+            mattata.toggle_setting(
+                chat_id,
+                'nsfw type '..type
+            )
+        else
+            mattata.toggle_setting(
+                chat_id,
+                'nsfw '..action
+            )
         end
         keyboard = administration.get_nsfw_keyboard(chat_id)
     elseif callback_query.data:match('^%-%d+:log:%a*$')
