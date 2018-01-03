@@ -74,7 +74,7 @@ function nsfw:on_message(message, configuration, language)
         elseif message.reply.video or (message.reply.document and message.reply.document.mime_type:match('^video/%a*')) then
             local file = mattata.get_file(message.reply.video and message.reply.video.file_id or (message.reply.document and message.reply.document.file_id))
             if not file then return false end
-            local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
+            local request_url = string.format('https://api.telegram.org/file/bot%s/%s.mp4', configuration.bot_token, file.result.file_path)
             local json_data = nsfw.detect(message, configuration.keys.nsfw, request_url)
             if json_data and json_data.result == "ok" then
                 return mattata.send_message(
@@ -86,7 +86,7 @@ function nsfw:on_message(message, configuration, language)
                     message.reply.message_id
                 )
             else
-                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"json_data.content.code.." | "..json_data.content.message.."</code>", 'html')
             end
         else
             return mattata.send_reply(message, "I can only detect NSFW content from images and sticker!")
