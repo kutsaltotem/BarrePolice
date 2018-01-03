@@ -127,7 +127,7 @@ function nsfw:on_message(message, configuration, language)
             else
                 return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.." | "..json_data.content.message.."</code>", 'html')
             end
-        elseif message.reply.document and message.reply.document.mime_type:match('^video/%a*')) then
+        elseif message.reply.document and message.reply.document.mime_type:match('^video/%a*') then
             local file
             if not message.reply.document.file_name == "giphy.mp4" and message.reply.document.duration > 10 then
                 file = mattata.get_file(message.reply.document.thumb.file_id)
