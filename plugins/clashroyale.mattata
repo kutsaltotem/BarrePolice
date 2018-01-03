@@ -30,7 +30,7 @@ function clashroyale:on_inline_query(inline_query, configuration, language)
 end
 
 function clashroyale:on_message(message, configuration, language)
-    return mattata.send_reply(message.chat.id, clashroyale.help)
+    return mattata.send_reply(message, clashroyale.help)
 
 end
 
