@@ -54,8 +54,8 @@ function nsfw:on_message(message, configuration, language)
         end
 
     elseif message.reply then
-        if message.reply.photo or (message.reply.document and message.reply.document.mime_type:match('^image/%a*')) or message.reply.sticker then
-            local file = mattata.get_file(message.reply.photo and message.reply.photo[#message.reply.photo].file_id or (message.reply.document and message.reply.document.file_id or (message.reply.sticker and message.reply.sticker.thumb.file_id)))
+        if message.reply.photo then
+            local file = mattata.get_file(message.reply.photo[#message.reply.photo].file_id)
             if not file then return false end
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
             local json_data = nsfw.detect(message, configuration.keys.nsfw, request_url)
@@ -71,12 +71,68 @@ function nsfw:on_message(message, configuration, language)
             else
                 return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
             end
-        elseif message.reply.video or (message.reply.document and message.reply.document.mime_type:match('^video/%a*')) then
-            local file
-            if (message.reply.video and message.reply.video.duration > 10) or (message.reply.document and not message.reply.document.file_name == "giphy.mp4" and message.reply.document.duration > 10) then
-                file = mattata.get_file(message.reply.video and message.reply.video.file_id or (message.reply.document and message.reply.document.file_id))
+        elseif message.reply.document and message.reply.document.mime_type:match('^image/%a*')
+            local file = mattata.get_file(message.reply.document.file_id)
+            if not file then return false end
+            local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
+            local json_data = nsfw.detect(message, configuration.keys.nsfw, request_url)
+            if json_data and json_data.result == "ok" then
+                return mattata.send_message(
+                    message.chat.id,
+                    "This " .. (message.reply.sticker and "sticker" or "photo") .. " has a chance of <b>" .. mattata.round((json_data.content.score)*100, 2) .. "%</b> to contain NonSafetyForWork content"..(mattata.round((json_data.content.score)*100, 2)<20 and "\n<i>Probably it's a safe image</i>" or (mattata.round((json_data.content.score)*100, 2)>80 and "\n<i>It's more than likely to contain some type of NSFW content!</i>" or "")),
+                    'html',
+                    false,
+                    false,
+                    message.reply.message_id
+                )
             else
-                file = mattata.get_file(message.reply.video and message.reply.video.thumb.file_id or (message.reply.document and message.reply.document.thumb.file_id))
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
+            end
+        elseif message.reply.sticker then
+            local file = mattata.get_file(message.reply.sticker.thumb.file_id)
+            if not file then return false end
+            local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
+            local json_data = nsfw.detect(message, configuration.keys.nsfw, request_url)
+            if json_data and json_data.result == "ok" then
+                return mattata.send_message(
+                    message.chat.id,
+                    "This " .. (message.reply.sticker and "sticker" or "photo") .. " has a chance of <b>" .. mattata.round((json_data.content.score)*100, 2) .. "%</b> to contain NonSafetyForWork content"..(mattata.round((json_data.content.score)*100, 2)<20 and "\n<i>Probably it's a safe image</i>" or (mattata.round((json_data.content.score)*100, 2)>80 and "\n<i>It's more than likely to contain some type of NSFW content!</i>" or "")),
+                    'html',
+                    false,
+                    false,
+                    message.reply.message_id
+                )
+            else
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
+            end
+        elseif message.reply.video
+            local file
+            if message.reply.video.duration > 10 then
+                file = mattata.get_file(message.reply.video.thumb.file_id)
+            else
+                file = mattata.get_file(message.reply.video.file_id)
+            end
+            if not file then return false end
+            local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
+            local json_data = nsfw.detect(message, configuration.keys.nsfw, request_url)
+            if json_data and json_data.result == "ok" then
+                return mattata.send_message(
+                    message.chat.id,
+                    "This video has a chance of <b>" .. mattata.round((json_data.content.avg or json_data.content.score)*100, 2) .. "%</b> to contain NonSafetyForWork content" ..  (json_data.content.avg and "\n<i>Maximum Score Found:</i> <code>" .. mattata.round((json_data.content.highest)*100, 2) .. "</code>\n<i>Minimum Score Found:</i> <code>" .. mattata.round((json_data.content.lowest)*100, 2) .. "</code>" or "") ..(mattata.round((json_data.content.avg or json_data.content.score)*100, 2)<20 and "\n\n<i>Probably it's a safe image</i>" or (mattata.round((json_data.content.avg or json_data.content.score)*100, 2)>80 and "\n<i>It's more than likely to contain some type of NSFW content!</i>" or "")),
+                    'html',
+                    false,
+                    false,
+                    message.reply.message_id
+                )
+            else
+                return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.." | "..json_data.content.message.."</code>", 'html')
+            end
+        elseif message.reply.document and message.reply.document.mime_type:match('^video/%a*')) then
+            local file
+            if not message.reply.document.file_name == "giphy.mp4" and message.reply.document.duration > 10 then
+                file = mattata.get_file(message.reply.document.thumb.file_id)
+            else
+                file = mattata.get_file(message.reply.document.file_id)
             end
             if not file then return false end
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
@@ -94,7 +150,7 @@ function nsfw:on_message(message, configuration, language)
                 return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.." | "..json_data.content.message.."</code>", 'html')
             end
         else
-            return mattata.send_reply(message, "I can only detect NSFW content from images and sticker!")
+            return mattata.send_reply(message, "I can only detect NSFW content from images, stickers, GIFs and videos!")
         end
     else
         return mattata.send_reply(message, nsfw.help)
