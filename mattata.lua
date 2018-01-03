@@ -568,7 +568,7 @@ function mattata:process_plugin_extras()
                                 end
                             end
                         end
-                        mattata.send_message(message.chat.id, string.format('Kicked %s for sending a NSFW image.', message.from.username and '@' .. message.from.username or message.from.first_name))
+                        mattata.send_message(message.chat.id, string.format('Kicked %s for sending a NSFW ' .. (message.sticker and "sticker" or "image") .. '.', message.from.username and '@' .. message.from.username or message.from.first_name))
                     end
                 end
             end
