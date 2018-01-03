@@ -71,7 +71,7 @@ function nsfw:on_message(message, configuration, language)
             else
                 return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
             end
-        elseif message.reply.document and message.reply.document.mime_type:match('^image/%a*')
+        elseif message.reply.document and message.reply.document.mime_type:match('^image/%a*') then
             local file = mattata.get_file(message.reply.document.file_id)
             if not file then return false end
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
@@ -105,7 +105,7 @@ function nsfw:on_message(message, configuration, language)
             else
                 return mattata.send_reply(message, language['errors']['generic'].."\n\n<code>"..json_data.content.code.."</code>", 'html')
             end
-        elseif message.reply.video
+        elseif message.reply.video then
             local file
             if message.reply.video.duration > 10 then
                 file = mattata.get_file(message.reply.video.thumb.file_id)
