@@ -69,13 +69,8 @@ function nsfw:on_message(message, configuration, language)
         end
 
     elseif message.reply then
-        if message.reply.photo then
-            local file = mattata.get_file(message.reply.photo[#message.reply.photo].file_id)
-            if not file then return false end
-            local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
-            nsfw.detect(message, configuration.keys.nsfw, request_url, "plugin")
-        elseif message.reply.document and message.reply.document.mime_type:match('^image/%a*') then
-            local file = mattata.get_file(message.reply.document.file_id)
+        if message.reply.photo or (message.reply.document and message.reply.document.mime_type:match('^image/%a*')) or message.reply.sticker then
+            local file = mattata.get_file(message.reply.photo[#message.reply.photo].file_id or message.reply.document.file_id or message.reply.sticker.thumb.file_id)
             if not file then return false end
             local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
             nsfw.detect(message, configuration.keys.nsfw, request_url, "plugin")
