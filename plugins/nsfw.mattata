@@ -26,7 +26,7 @@ function nsfw.request(key, input, content)
         return response.json()
     elseif input == "detect" then
         local headers = {auth = key, image = content}
-        response = requests.get{url = 'http://nsfw.api.thunkable.ga/', headers = headers}
+        response = requests.get{url = 'http://nsfw.api.thunkable.ga/', headers = headers, timeout = 10}
         return response.json()
     end
 end
