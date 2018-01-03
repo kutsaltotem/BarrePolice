@@ -521,7 +521,7 @@ function mattata:process_plugin_extras()
     end
 
     -- Process NSFW Images
-    if message.type ~= "private" and mattata.get_setting(message.chat.id, 'use administration') and mattata.get_setting(message.chat.id, 'nsfw enabled') and (message.photo or (message.document and message.document.mime_type:match('^image/%a*')) or message.sticker) then
+    if message.type ~= "private" and mattata.get_setting(message.chat.id, 'use administration') and mattata.get_setting(message.chat.id, 'nsfw enabled') and (message.photo or (message.document and message.document.mime_type:match('^image/%a*')) or message.sticker) and not mattata.is_group_admin(message.chat.id, message.from.id) and not mattata.is_global_admin(message.from.id) then
         if mattata.is_trusted_user(message.chat.id, message.from.id) and mattata.get_setting(message.chat.id, 'trusted permissions nsfw') then else
             local max_chance = mattata.get_setting(message.chat.id, 'nsfw limit') or 80
             local file = mattata.get_file(message.photo and message.photo[#message.photo].file_id or (message.document and message.document.file_id or (message.sticker and message.sticker.thumb.file_id)))
