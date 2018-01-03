@@ -960,20 +960,20 @@ function administration:on_callback_query(callback_query, message, configuration
             end
         elseif action:match('^type_%a*$') then
             local type = action:match('^type_(%a*)$')
-            if (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw type '..type) == "avg") then
-                mattata.toggle_setting(chat_id, 'nsfw type '..type, 'min')
-            elseif (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw type '..type) == "min") then
+            if (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw type '..type) == "min") then
                 mattata.toggle_setting(chat_id, 'nsfw type '..type, 'max')
             elseif (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw type '..type) == "max") then
                 mattata.toggle_setting(chat_id, 'nsfw type '..type, 'avg')
+            else
+                mattata.toggle_setting(chat_id, 'nsfw type '..type, 'min')
             end
         else
-            if (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw '..action) == "avg") then
-                mattata.toggle_setting(chat_id, 'nsfw '..action, 'min')
-            elseif (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw '..action) == "min") then
+            if (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw '..action) == "min") then
                 mattata.toggle_setting(chat_id, 'nsfw '..action, 'max')
             elseif (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw '..action) == "max") then
                 mattata.toggle_setting(chat_id, 'nsfw '..action, 'avg')
+            else
+                mattata.toggle_setting(chat_id, 'nsfw '..action, 'min')
             end
         end
         keyboard = administration.get_nsfw_keyboard(chat_id)
