@@ -61,13 +61,7 @@ function captionbotai:on_message(message, configuration, language)
     if not (message.photo or (message.reply and message.reply.photo)) then
         return false
     end
-
-    local file
-    if message.photo then
-        file = mattata.get_file(message.photo[#message.photo].file_id)
-    else
-        file = mattata.get_file(message.reply.photo[#message.reply.photo].file_id)
-    end
+    local file = message.photo and mattata.get_file(message.photo[#message.photo].file_id) or mattata.get_file(message.reply.photo[#message.reply.photo].file_id)
     if not file then
         return false
     end
@@ -83,7 +77,7 @@ function captionbotai:on_message(message, configuration, language)
         return mattata.send_reply(message, language['captionbotai']['1'] .. ' 😳')
     end
     output = output:match('%, but (.-)$') or output
-    return mattata.send_message(message.chat.id, output:gsub('%.$', ''), true, false, false, message.message_id)
+    return mattata.send_message(message.chat.id, output:gsub('%.$', ''), true, false, false, message.photo and message.message_id or message.reply.message_id)
 end
 
 return captionbotai
