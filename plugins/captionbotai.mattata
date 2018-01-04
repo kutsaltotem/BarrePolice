@@ -11,6 +11,11 @@ local ltn12 = require('ltn12')
 local json = require('dkjson')
 local configuration = require('configuration')
 
+function captionbotai:init()
+    captionbotai.commands = mattata.commands(self.info.username):command('describe').table
+    captionbotai.help = '/describe - In reply to an image it will describe it.'
+end
+
 function captionbotai.conversation()
     local str, res = https.request('https://www.captionbot.ai/api/init')
     if res ~= 200 then
@@ -53,11 +58,11 @@ function captionbotai.request(input, id)
 end
 
 function captionbotai:on_message(message, configuration, language)
-    if not message.photo then
+    if not message.photo or (not message.reply and not message.reply.photo) then
         return false
     end
-    local file = mattata.get_file(message.photo[#message.photo].file_id) -- Gets the highest
-    -- resolution available, for the best result.
+
+    local file = (message.photo and mattata.get_file(message.photo[#message.photo].file_id) or mattata.get_file(message.reply.photo[#message.photo].file_id))
     if not file then
         return false
     end
@@ -72,7 +77,7 @@ function captionbotai:on_message(message, configuration, language)
         return mattata.send_reply(message, language['captionbotai']['1'] .. ' 😳')
     end
     output = output:match('%, but (.-)$') or output
-    return mattata.send_reply(message, output:gsub('%.$', ''))
+    return mattata.send_message(message.chat.id, output:gsub('%.$', ''), true, false, false, message.message_id)
 end
 
 return captionbotai
