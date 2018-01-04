@@ -26,16 +26,15 @@ function fortune.get_animals()
     return animals
 end
 
-function fortune.get_fortune(username)
+function fortune.get_fortune()
     return '<pre>' .. mattata.escape_html(
         io.popen(
             string.format(
-                '/usr/games/%s -f %s "$(/usr/games/fortune)" && echo "\nvia @%s"',
+                '/usr/games/%s -f %s "$(/usr/games/fortune)"',
                 math.random(2) == 1
                 and 'cowsay'
                 or 'cowthink',
-                fortune.get_animals()[math.random(#fortune.get_animals())],
-                username
+                fortune.get_animals()[math.random(#fortune.get_animals())]
             )
         ):read('*all')
     ) .. '</pre>'
