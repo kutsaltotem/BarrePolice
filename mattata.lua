@@ -515,6 +515,7 @@ function mattata:process_plugin_extras()
     if not mattata.is_plugin_disabled('captionbotai', message) and (message.photo or (message.reply and message.reply.photo)) then
         message = message.reply or message
         if message.text:lower():match('^wh?at .- th[ia][st].-') or message.text:lower():match('^who .- th[ia][st].-') then
+            print("TRIGGERED")
             local captionbotai = dofile('plugins/captionbotai.mattata')
             captionbotai.on_message(self, message, configuration, language)
         end
