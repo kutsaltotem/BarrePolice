@@ -515,7 +515,7 @@ function mattata:process_plugin_extras()
     if not mattata.is_plugin_disabled('captionbotai', message) and (message.photo or (message.reply and message.reply.photo)) then
         if (message.reply and (message.text:lower():match('^wh?at .* th[ia][st].-') or message.text:lower():match('^who .* th[ia][st].-'))) or (message.photo and message.caption and (message.caption:lower():match('^wh?at .* th[ia][st].-') or message.caption:lower():match('^who .* th[ia][st].-'))) then
             local captionbotai = dofile('plugins/captionbotai.mattata')
-            captionbotai.on_message(self, (message.photo and message or message.reply), configuration, language)
+            captionbotai.on_message(self, message, configuration, language)
         end
     end
 

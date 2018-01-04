@@ -58,7 +58,7 @@ function captionbotai.request(input, id)
 end
 
 function captionbotai:on_message(message, configuration, language)
-    if not message.photo or (not message.reply and not message.reply.photo) then
+    if (not message.photo) or (not message.reply and (not message.reply.photo)) then
         return false
     end
 
