@@ -14,7 +14,7 @@ end
 function fortune.get_animals()
     local animals = {}
     for n in string.gmatch(
-        io.popen('cowsay -l'):read('*all'):match(':(.+)$'),
+        io.popen('/usr/games/cowsay -l'):read('*all'):match(':(.+)$'),
         '[%S]+'
     )
     do
@@ -30,7 +30,7 @@ function fortune.get_fortune(username)
     return '<pre>' .. mattata.escape_html(
         io.popen(
             string.format(
-                '%s -f %s "$(fortune)" && echo "\nvia @%s"',
+                '/usr/games/%s -f %s "$(fortune)" && echo "\nvia @%s"',
                 math.random(2) == 1
                 and 'cowsay'
                 or 'cowthink',
