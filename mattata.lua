@@ -513,7 +513,6 @@ function mattata:process_plugin_extras()
 
     -- Process Caption AI
     if not mattata.is_plugin_disabled('captionbotai', message) and (message.photo or (message.reply and message.reply.photo)) then
-        print(message.text)
         if message.text:lower():match('^wh?at .* th[ia][st].-') or message.text:lower():match('^who .* th[ia][st].-') then
             local captionbotai = dofile('plugins/captionbotai.mattata')
             captionbotai.on_message(self, (message.photo and message.photo or message.reply), configuration, language)
