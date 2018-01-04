@@ -513,6 +513,7 @@ function mattata:process_plugin_extras()
 
     -- Process Caption AI
     if not mattata.is_plugin_disabled('captionbotai', message) and (message.photo or (message.reply and message.reply.photo)) then
+        print("LOL")
         message = message.reply or message
         if message.text:lower():match('^wh?at .- th[ia][st].-') or message.text:lower():match('^who .- th[ia][st].-') then
             print("TRIGGERED")
