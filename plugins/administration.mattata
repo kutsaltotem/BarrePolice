@@ -473,7 +473,7 @@ function administration.get_nsfw_keyboard(chat_id)
         ['inline_keyboard'] = {}
     }
     table.insert(keyboard.inline_keyboard, {
-        {['text'] = 'Not Safety For Work', ['callback_data'] = 'administration:'..chat_id..':nsfw:help_general'},
+        {['text'] = 'Not Safe For Work', ['callback_data'] = 'administration:'..chat_id..':nsfw:help_general'},
     })
     table.insert(keyboard.inline_keyboard, {
         {['text'] = 'Filter Enabled?', ['callback_data'] = 'administration:'..chat_id..':nsfw:help'},
@@ -913,13 +913,13 @@ function administration:on_callback_query(callback_query, message, configuration
         if action == "help" then
             mattata.answer_callback_query(
                 callback_query.id,
-                'Choose a number between 0 and 100 to set the NotSafetyForWork filter. Every image will be passed through the filter, and if this chance is bigger I will kick or ban the user, depending on your settings.',
+                'Choose a number between 0 and 100 to set the NotSafeForWork filter. Every image will be passed through the filter, and if this chance is bigger I will kick or ban the user, depending on your settings.',
                 true
             )
         elseif action == "help_general" then
             mattata.answer_callback_query(
                 callback_query.id,
-                'NotSafetyForWork: Used to describe Internet content generally inappropriate for the typical workplace, i.e., would not be acceptable in the presence of your boss and colleagues (as opposed to SFW, Safe For Work).',
+                'NotSafeForWork: Used to describe Internet content generally inappropriate for the typical workplace, i.e., would not be acceptable in the presence of your boss and colleagues (as opposed to SFW, Safe For Work).',
                 true
             )
         elseif action == "help_delete" then
@@ -968,13 +968,7 @@ function administration:on_callback_query(callback_query, message, configuration
                 redis:hset('chat:' .. chat_id .. ':settings', 'nsfw type '..type, 'min')
             end
         else
-            if (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw '..action) == "min") then
-                redis:hset('chat:' .. chat_id .. ':settings', 'nsfw '..action, 'max')
-            elseif (redis:hget('chat:' .. chat_id .. ':settings', 'nsfw '..action) == "max") then
-                redis:hset('chat:' .. chat_id .. ':settings', 'nsfw '..action, 'avg')
-            else
-                redis:hset('chat:' .. chat_id .. ':settings', 'nsfw '..action, 'min')
-            end
+            mattata.toggle_setting(chat_id, 'nsfw '..action)
         end
         keyboard = administration.get_nsfw_keyboard(chat_id)
     elseif callback_query.data:match('^%-%d+:log:%a*$')

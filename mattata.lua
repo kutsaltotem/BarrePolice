@@ -521,54 +521,85 @@ function mattata:process_plugin_extras()
     end
 
     -- Process NSFW Images
-    if message.type ~= "private" and mattata.get_setting(message.chat.id, 'use administration') and mattata.get_setting(message.chat.id, 'nsfw enabled') and (message.photo or (message.document and message.document.mime_type:match('^image/%a*')) or message.sticker) and not mattata.is_group_admin(message.chat.id, message.from.id) and not mattata.is_global_admin(message.from.id) then
+    if message.type ~= "private" and mattata.get_setting(message.chat.id, 'use administration') and mattata.get_setting(message.chat.id, 'nsfw enabled') and (((message.photo or (message.document and message.document.mime_type:match('^image/%a*'))) and mattata.get_setting(message.chat.id, 'nsfw images')) or ((message.video or (message.document and message.document.mime_type:match('^video/%a*'))) and mattata.get_setting(message.chat.id, 'nsfw videos')) or (message.sticker and mattata.get_setting(message.chat.id, 'nsfw stickers')) or ((message.document and message.document.mime_type:match('^video/%a*') and message.document.file_name == "giphy.mp4") and mattata.get_setting(message.chat.id, 'nsfw gifs'))) and not mattata.is_group_admin(message.chat.id, message.from.id) and not mattata.is_global_admin(message.from.id) then
         if mattata.is_trusted_user(message.chat.id, message.from.id) and mattata.get_setting(message.chat.id, 'trusted permissions nsfw') then else
-            local max_chance = mattata.get_setting(message.chat.id, 'nsfw limit') or 80
-            local file = mattata.get_file(message.photo and message.photo[#message.photo].file_id or (message.document and message.document.file_id or (message.sticker and message.sticker.thumb.file_id)))
-            if not file then return false end
-            local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
-            local nsfw = dofile('plugins/nsfw.mattata')
-            local response = nsfw.detect(message, configuration.keys.nsfw, request_url, "core")
-            if response and response.result == "ok" then
-                print(response.content.score*100)
-                print(max_chance)
-                if ((response.content.score)*100) > tonumber(max_chance) then
-                    if mattata.get_setting(message.chat.id, 'nsfw delete') then
-                        mattata.delete_message(message.chat.id, message.message_id)
-                    end
-                    local action = mattata.get_setting(message.chat.id, 'ban not kick') and mattata.ban_chat_member or mattata.kick_chat_member
-                    local success = action(message.chat.id, message.from.id)
-                    if success then
-                        if mattata.get_setting(message.chat.id, 'log administrative actions') and mattata.get_setting(message.chat.id, 'log nsfw') then
-                            local log_chat = mattata.get_log_chat(message.chat.id)
-                            mattata.send_message(log_chat, string.format('#action #nsfw #admin_'..self.info.id..' #user_'..message.from.id..' #group_'..tostring(message.chat.id):gsub("%-", "")..'\n\n<pre>%s [%s] has kicked %s [%s] from %s [%s] for sending a NSFW ' .. (message.sticker and "sticker" or "image") .. '.</pre>', mattata.escape_html(self.info.first_name), self.info.id, mattata.escape_html(message.from.first_name), message.from.id, mattata.escape_html(message.chat.title), message.chat.id), 'html')
+            local file
+            if message.photo then
+                file = mattata.get_file(message.photo[#message.photo].file_id)
+            elseif message.video then
+                if message.video.duration > 10 then
+                    file = mattata.get_file(message.video.thumb.file_id)
+                else
+                    file = mattata.get_file(message.video.file_id)
+                end
+            elseif message.sticker then
+                file = mattata.get_file(sticker.thumb.file_id)
+            elseif message.document and message.document.mime_type:match('^image/%a*') then
+                file = mattata.get_file(message.document.file_id)
+            elseif message.document and message.document.mime_type:match('^video/%a*') then
+                if not message.document.file_name == "giphy.mp4" and message.document.duration > 10 then
+                    file = mattata.get_file(message.document.thumb.file_id)
+                else
+                    file = mattata.get_file(message.document.file_id)
+                end
+            end
+            if file then
+                local max_chance = mattata.get_setting(message.chat.id, 'nsfw limit') or 80
+                local request_url = string.format('https://api.telegram.org/file/bot%s/%s', configuration.bot_token, file.result.file_path)
+                local nsfw = dofile('plugins/nsfw.mattata')
+                local response = nsfw.detect(message, configuration.keys.nsfw, request_url)
+                if response and response.result == "ok" then
+                    local score
+                    if message.photo or message.sticker or (message.document and message.document.mime_type:match('^image/%a*')) or (message.video and message.video.duration > 10) or (message.document and message.document.mime_type:match('^video/%a*') and not message.document.file_name == "giphy.mp4" and message.document.duration > 10) then
+                        score = response.content.score
+                    else
+                        local content_setting = redis:hget('chat:' .. message.chat.id .. ':settings', 'nsfw type '..(message.video and 'videos' or 'gifs')) or 'avg'
+                        if content_setting == 'avg' then
+                            score = response.content.avg
+                        elseif content_setting == 'max' then
+                            score = response.content.highest
+                        elseif content_setting == 'min' then
+                            score = response.content.lowest
                         end
-                        if mattata.get_setting(message.chat.id, 'notify admins actions') then
-                            for i, admin in pairs(mattata.get_chat_administrators(message.chat.id).result) do
-                              if not admin.username then
-                                  mattata.send_message(
-                                      admin.user.id,
-                                      string.format(
-                                          '#action #nsfw #admin_'..api.info.id..' #user_'..message.from.id..' #group_'..tostring(message.chat.id):gsub("%-", "")..'\n\n<pre>%s [%s] has kicked %s [%s] from %s [%s] for sending a NSFW ' .. (message.sticker and "sticker" or "image") .. '.</pre>',
-                                          mattata.escape_html(api.info.first_name),
-                                          api.info.id,
-                                          mattata.escape_html(message.from.first_name),
-                                          message.from.id,
-                                          mattata.escape_html(message.chat.title),
-                                          message.chat.id
-                                      ),
-                                      'html'
-                                  )
-                              elseif not admin.username:lower():match('bot$') then
-                                    mattata.send_message(
-                                        admin.user.id,
-                                        string.format('#action #nsfw #admin_'..api.info.id..' #user_'..message.from.id..' #group_'..tostring(message.chat.id):gsub("%-", "")..'\n\n<pre>%s [%s] has kicked %s [%s] from %s [%s] for sending a NSFW ' .. (message.sticker and "sticker" or "image") .. '.</pre>', mattata.escape_html(self.info.first_name), self.info.id, mattata.escape_html(message.from.first_name), message.from.id, mattata.escape_html(message.chat.title), message.chat.id),
-                                        'html'
-                                    )
+                    end
+                    if (score*100) > tonumber(max_chance) then
+                        if mattata.get_setting(message.chat.id, 'nsfw delete') then
+                            mattata.delete_message(message.chat.id, message.message_id)
+                        end
+                        local action = mattata.get_setting(message.chat.id, 'ban not kick') and mattata.ban_chat_member or mattata.kick_chat_member
+                        local success = action(message.chat.id, message.from.id)
+                        if success then
+                            if mattata.get_setting(message.chat.id, 'log administrative actions') and mattata.get_setting(message.chat.id, 'log nsfw') then
+                                local log_chat = mattata.get_log_chat(message.chat.id)
+                                mattata.send_message(log_chat, string.format('#action #nsfw #admin_'..self.info.id..' #user_'..message.from.id..' #group_'..tostring(message.chat.id):gsub("%-", "")..'\n\n<pre>%s [%s] has kicked %s [%s] from %s [%s] for sending a NSFW ' .. (message.sticker and "sticker" or "image") .. '.</pre>', mattata.escape_html(self.info.first_name), self.info.id, mattata.escape_html(message.from.first_name), message.from.id, mattata.escape_html(message.chat.title), message.chat.id), 'html')
+                            end
+                            if mattata.get_setting(message.chat.id, 'notify admins actions') then
+                                for i, admin in pairs(mattata.get_chat_administrators(message.chat.id).result) do
+                                  if not admin.username then
+                                      mattata.send_message(
+                                          admin.user.id,
+                                          string.format(
+                                              '#action #nsfw #admin_'..api.info.id..' #user_'..message.from.id..' #group_'..tostring(message.chat.id):gsub("%-", "")..'\n\n<pre>%s [%s] has kicked %s [%s] from %s [%s] for sending a NSFW ' .. (message.sticker and "sticker" or "image") .. '.</pre>',
+                                              mattata.escape_html(api.info.first_name),
+                                              api.info.id,
+                                              mattata.escape_html(message.from.first_name),
+                                              message.from.id,
+                                              mattata.escape_html(message.chat.title),
+                                              message.chat.id
+                                          ),
+                                          'html'
+                                      )
+                                  elseif not admin.username:lower():match('bot$') then
+                                        mattata.send_message(
+                                            admin.user.id,
+                                            string.format('#action #nsfw #admin_'..api.info.id..' #user_'..message.from.id..' #group_'..tostring(message.chat.id):gsub("%-", "")..'\n\n<pre>%s [%s] has kicked %s [%s] from %s [%s] for sending a NSFW ' .. (message.sticker and "sticker" or "image") .. '.</pre>', mattata.escape_html(self.info.first_name), self.info.id, mattata.escape_html(message.from.first_name), message.from.id, mattata.escape_html(message.chat.title), message.chat.id),
+                                            'html'
+                                        )
+                                    end
                                 end
                             end
+                            mattata.send_message(message.chat.id, string.format('Kicked %s for sending a NSFW ' .. (message.sticker and "sticker" or "image") .. '.', message.from.username and '@' .. message.from.username or message.from.first_name))
                         end
-                        mattata.send_message(message.chat.id, string.format('Kicked %s for sending a NSFW ' .. (message.sticker and "sticker" or "image") .. '.', message.from.username and '@' .. message.from.username or message.from.first_name))
                     end
                 end
             end
