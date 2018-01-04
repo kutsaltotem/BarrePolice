@@ -30,8 +30,11 @@ function clashroyale:on_inline_query(inline_query, configuration, language)
 end
 
 function clashroyale:on_message(message, configuration, language)
-    return mattata.send_reply(message, clashroyale.help)
-
+    local received_messages = redis:get('clashroyale:messages:received')
+    local received_inlines = redis:get('clashroyale:inlines:received')
+    local received_callbacks = redis:get('clashroyale:callbacks:received')
+    local output = '<a href="https://t.me/RoyaleInfo_Bot">RoyaleInfo Bot</a> Statistics\n\n• <i>Messages Received</i>: <code>'..received_messages..'</code>\n• <i>InlineQueries Received</i>: <code>'..received_inlines..'</code>\n• <i>CallbackQueries Received</i>: <code>'..received_callbacks..'</code>'
+    return mattata.send_reply(message, output, 'html')
 end
 
 return clashroyale
