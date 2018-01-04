@@ -62,10 +62,16 @@ function captionbotai:on_message(message, configuration, language)
         return false
     end
 
-    local file = (message.photo and mattata.get_file(message.photo[#message.photo].file_id) or mattata.get_file(message.reply.photo[#message.photo].file_id))
+    local file
+    if message.photo then
+        file = mattata.get_file(message.photo[#message.photo].file_id)
+    else
+        file = mattata.get_file(message.reply.photo[#message.photo].file_id)
+    end
     if not file then
         return false
     end
+
     mattata.send_chat_action(message.chat.id)
     local init = captionbotai.conversation()
     if not init then
