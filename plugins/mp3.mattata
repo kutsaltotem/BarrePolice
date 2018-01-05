@@ -27,6 +27,9 @@ end
 
 function mp3:on_message(message, configuration, language)
     local input = mattata.get_input(message.text)
+    if not input then
+        return mattata.send_reply(message, mp3.help)
+    end
     local id
     if input:match("v=.*$") then
         id = input:match("v=(.*)$")
@@ -39,7 +42,7 @@ function mp3:on_message(message, configuration, language)
     local video_data = mp3.request(input)
     print(video_data.id.videoId)
     if not io.open("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3", "r") then
-        io.popen('youtube-dl --extract-audio --audio-format mp3 "' .. video_data.id.videoId .. '" -o "/home/barreeeiroo/BarrePolice/downloads/youtube/%(id)s.%(ext)s"')
+        io.popen('youtube-dl --extract-audio --audio-format mp3 "' .. video_data.id.videoId .. '" -o "/home/barreeeiroo/BarrePolice/downloads/youtube/%(id)s.%(ext)s" -q')
     end
     if io.open("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3", "r") then
         return mattata.send_audio(
