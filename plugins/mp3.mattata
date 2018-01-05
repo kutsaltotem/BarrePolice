@@ -41,7 +41,6 @@ function mp3:on_message(message, configuration, language)
         io.popen('youtube-dl --extract-audio --audio-format mp3 "' .. video_data.id.videoId .. '" -o "/home/barreeeiroo/BarrePolice/downloads/youtube/%(id)s.%(ext)s"')
         print("downloaded")
     end
-    io.close
     if io.open("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3", "r") then
         return mattata.send_audio(
             message.chat.id,
