@@ -1,0 +1,59 @@
+--[[
+    Copyright 2017 Diego Barreiro <diego@makeroid.io>
+    This code is licensed under the MIT. See LICENSE for details.
+]]
+
+local mp3 = {}
+local mattata = require('mattata')
+local https = require('ssl.https')
+local url = require('socket.url')
+local json = require('dkjson')
+local configuration = require('configuration')
+
+function mp3:init()
+    assert(configuration.keys.youtube, 'mp3.mattata requires an API key, and you haven\'t got one configured!')
+    mp3.commands = mattata.commands(self.info.username):command('mp3').table
+    mp3.help = '/mp3 <YouTubeURL / Search> - Download a YouTube video in a MP3 format.'
+end
+
+function mp3.request(input)
+    local jstr, res = https.request('https://www.googleapis.com/youtube/v3/search?key=' .. configuration.keys.youtube .. '&type=video&part=snippet&q=' .. url.escape(input))
+    if res ~= 200 then
+        return 0
+    end
+    local jdat = json.decode(jstr)
+    return jdat.items[1]
+end
+
+function mp3:on_message(message, configuration, language)
+    local input = mattata.get_input(message.text)
+    local id
+    if input:match("v=.*$") then
+        id = input:match("v=(.*)$")
+    elseif input:match("youtu.be") then
+        id = input:match("youtu.be/(.*)")
+    else
+        id = input
+    end
+
+    local video_data = mp3.request(input)
+    if os.isfile("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3") then
+        io.popen('youtube-dl --extract-audio --audio-format mp3 "' .. video_data.id.videoId .. '" -o "/home/barreeeiroo/BarrePolice/downloads/youtube/%(id)s.%(ext)s"'):read('*all')
+    end
+    if os.isfile("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3") then
+        return mattata.send_audio(
+            message.chat.id,
+            "/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3",
+            "Here is your converted video!",
+            false,
+            mattata.escape_html(video_data.snippet.channelTitle),
+            mattata.escape_html(video_data.snippet.title),
+            false,
+            message.message_id
+        )
+    else
+        return mattata.send_reply(message, "I couldn't find any video")
+    end
+end
+
+return mp3
