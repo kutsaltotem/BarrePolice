@@ -42,22 +42,9 @@ function mp3:on_message(message, configuration, language)
     local video_data = mp3.request(input)
     if not io.open("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3", "r") then
         mattata.send_reply(message, "Checking Video...\n<i>Please be patient</i>", "html")
-        io.popen('youtube-dl --extract-audio --audio-format mp3 "' .. video_data.id.videoId .. '" -o "/home/barreeeiroo/BarrePolice/downloads/youtube/%(id)s.%(ext)s" -q')
-        if io.open("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3", "r") then
-            return mattata.send_audio(
-                message.chat.id,
-                "/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3",
-                "Here is your converted video",
-                false,
-                mattata.escape_html(video_data.snippet.channelTitle),
-                mattata.escape_html(video_data.snippet.title),
-                false,
-                message.message_id
-            )
-        else
-            return mattata.send_reply(message, "I couldn't find any video")
-        end
-    else
+        io.popen('youtube-dl --extract-audio --audio-format mp3 "' .. video_data.id.videoId .. '" -o "/home/barreeeiroo/BarrePolice/downloads/youtube/%(id)s.%(ext)s" -q'):read('*all')
+    end
+    if io.open("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3", "r") then
         return mattata.send_audio(
             message.chat.id,
             "/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3",
@@ -68,6 +55,8 @@ function mp3:on_message(message, configuration, language)
             false,
             message.message_id
         )
+    else
+        return mattata.send_reply(message, "I couldn't find any video")
     end
 end
 
