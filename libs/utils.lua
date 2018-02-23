@@ -874,7 +874,7 @@ function utils.is_global_admin(id)
     return false
 end
 
-function utils.is_global_admin(id)
+function utils.is_gban_admin(id)
     for k, v in pairs(configuration.gban_admins) do
         if id == v then
             return true
