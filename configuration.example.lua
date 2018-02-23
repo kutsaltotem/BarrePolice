@@ -44,6 +44,9 @@ return { -- Rename this file to configuration.lua for the bot to work!
     -- FULL control over the bot, this includes access to server files via the lua and shell plugins.
         nil
     },
+    ['gban_admins'] = { -- Only gblacklist and gwhitelist admin
+        nil
+    },
     ['language'] = 'en', -- The two character locale to set your default language to.
     ['log_chat'] = nil, -- This needs to be the numerical identifier of the chat you wish to log
     -- errors into. If it's not a private chat it should begin with a '-' symbol.

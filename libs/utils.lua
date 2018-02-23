@@ -874,6 +874,15 @@ function utils.is_global_admin(id)
     return false
 end
 
+function utils.is_global_admin(id)
+    for k, v in pairs(configuration.gban_admins) do
+        if id == v then
+            return true
+        end
+    end
+    return false
+end
+
 function utils.is_group_mod(chat_id, user_id)
     if not chat_id or not user_id then
         return false
