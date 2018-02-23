@@ -213,6 +213,7 @@ mattata.get_user = utils.get_user
 mattata.is_plugin_disabled = utils.is_plugin_disabled
 mattata.is_group_admin = utils.is_group_admin
 mattata.is_global_admin = utils.is_global_admin
+mattata.is_gban_admin = utils.is_gban_admin
 mattata.is_group_mod = utils.is_group_mod
 mattata.is_group_owner = utils.is_group_owner
 mattata.get_help = utils.get_help
