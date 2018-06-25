@@ -22,11 +22,11 @@ end
 function nsfw.request(key, input, content)
     if input == "generate" then
         local headers = {auth = key}
-        response = requests.get{url = 'http://nsfw.api.thunkable.ga/key?id='..content, headers = headers}
+        response = requests.get{url = 'http://nsfw.api.barreiro.xyz/key.php?id='..content, headers = headers}
         return response.json()
     elseif input == "detect" then
         local headers = {auth = key, image = content}
-        response = requests.get{url = 'http://nsfw.api.thunkable.ga/', headers = headers, timeout = 20}
+        response = requests.get{url = 'http://nsfw.api.barreiro.xyz/', headers = headers, timeout = 20}
         return response.json()
     end
 end
