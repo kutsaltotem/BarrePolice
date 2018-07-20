@@ -42,7 +42,7 @@ function mp3:on_message(message, configuration, language)
     local video_data = mp3.request(input)
     if not io.open("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3", "r") then
         mattata.send_reply(message, "Checking Video...\n<i>Please be patient</i>", "html")
-        io.popen('youtube-dl --extract-audio --audio-format mp3 "' .. video_data.id.videoId .. '" -o "/home/barreeeiroo/BarrePolice/downloads/youtube/%(id)s.%(ext)s" -q'):read('*all')
+        io.popen('youtube-dl --extract-audio --audio-format mp3 "' .. video_data.id.videoId .. '" -o "/root/BarrePolice/downloads/youtube/%(id)s.%(ext)s" -q'):read('*all')
     end
     if io.open("/home/barreeeiroo/BarrePolice/downloads/youtube/" .. video_data.id.videoId .. ".mp3", "r") then
         return mattata.send_audio(
