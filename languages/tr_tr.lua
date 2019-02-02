@@ -102,7 +102,7 @@ return {
         ['1'] = 'Para yere düştü:',
         ['2'] = 'Bildin!',
         ['3'] = 'Bilemedin dostum,tekrar dene...',
-        ['4'] = 'Geçersiz argümanlar verildi. Tahmininizi belirtmelisiniz, \ 'heads \' veya \ 'tails \ olmalı'.'
+        ['4'] = 'Geçersiz argümanlar verildi. Tahmininizi belirtmelisiniz, \'heads\' veya \'tails\ olmalı'.'
     },
     ['commandstats'] = {
         ['1'] = 'Bu sohbette hiçbir komut gönderilmedi!',
