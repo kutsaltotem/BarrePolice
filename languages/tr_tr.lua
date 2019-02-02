@@ -102,7 +102,7 @@ return {
         ['1'] = 'Para yere düştü:',
         ['2'] = 'Bildin!',
         ['3'] = 'Bilemedin dostum,tekrar dene...',
-        ['4'] = 'Geçersiz argümanlar verildi. Tahmininizi belirtmelisiniz, \'heads\' veya \'tails\ olmalı'.'
+        ['4'] = 'Geçersiz argümanlar verildi. Tahmininizi belirtmelisiniz, \'heads(tura)\' veya \'tails(yazı)\ olmalı'.'
     },
     ['commandstats'] = {
         ['1'] = 'Bu sohbette hiçbir komut gönderilmedi!',
@@ -378,7 +378,7 @@ Sistem:
         ['9'] = 'Sonuç göndermek için tıklayın.'
     },
     ['lmgtfy'] = {
-        ['1'] = 'Let me Google that for you!'
+        ['1'] = 'Senin için Google da arayayım!'
     },
     ['location'] = {
         ['1'] = 'Ayarlanmış konumunuz yok. Yeni konum ayarlamak ister misiniz?'
@@ -412,8 +412,8 @@ Sistem:
         ['7'] = 'Resim',
         ['8'] = 'Kullanıcı adı geçmişi',
         ['9'] = 'Lütfen özellik seçiniz:',
-        ['10'] = 'Lütfen Minecraft oyuncusunun kullanıcı adını giriniz. (örnek: "By_Azade" By_Azade hakkında bilgi verecel).',
-        ['11'] = 'Minecraft usernames are between 3 and 16 characters long.'
+        ['10'] = 'Lütfen Minecraft oyuncusunun kullanıcı adını giriniz. (örnek: "Holytotem" Holytotem hakkında bilgi verecek).',
+        ['11'] = 'Minecraft kullanıcı adları 3 ila 16 karakter uzunluğundadır.'
     },
     ['mute'] = {
         ['1'] = 'Hangi kullanıcıyı susturmak istersiniz? Bu kullanıcıyı @kulanıcıadı şeklinde veya kullanıcı IDsi ile belirtebilirsin.',
@@ -493,7 +493,7 @@ Sistem:
         ['2'] = 'Takma adınız "%s"!'
     },
     ['ninegag'] = {
-        ['1'] = 'Read More'
+        ['1'] = 'Devamını oku'
     },
     ['optout'] = {
         ['1'] = 'Toplanan verileri göndermeyi için seçtiniz! /optout komutunu kullanın.',
@@ -605,7 +605,7 @@ Sistem:
     },
     ['statistics'] = {
         ['1'] = 'Bu sohbette hiç mesaj gönderilmedi!',
-        ['2'] = '<b>Statistics for:</b> %s\n\n%s\n<b>Total messages sent:</b> %s',
+        ['2'] = '<b>Buraya ait istatistikler:</b> %s\n\n%s\n<b>Toplam gönderilen mesaj:</b> %s',
         ['3'] = 'Bu sohbet istatistikleri sıfırlandı!',
         ['4'] = 'Bu sohbetin istatistiklerini sıfırlayamadım. Belki daha önce resetlendi?'
     },
