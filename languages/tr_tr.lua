@@ -16,7 +16,7 @@ return {
         ['admin'] = 'Bu komutu kullanabilmeniz için grupta admin veya moderatör olmalısınız.',
         ['unknown'] = 'Bu kullanıcıyı tanımıyorum. Eğer onu bana tanıtmak isterseniz, mesajını bana yönlendirin.',
         ['generic'] = 'Hata oluştu!',
-        ['use'] = 'Bunu kullanmanıza izi yok!'
+        ['use'] = 'Bunu kullanmanıza izin yok!'
     },
     ['afk'] = {
         ['1'] = 'Üzgünüm, Bu özellik sadece aktif kullanıcılar için @kullanıcıadı şeklinde kullanılır!',
@@ -93,7 +93,7 @@ return {
         ['10'] = 'Bu mesaj geçersiz Markdown biçimlendirme içeriyor! Lütfen sözdiziminizi düzeltin ve tekrar deneyin.'
     },
     ['chuck'] = {
-        ['1'] = 'Sonuçları göndermel için tıkla.'
+        ['1'] = 'Sonuçları göndermek için tıkla.'
     },
     ['clickbait'] = {
         ['1'] = 'Başka bir tane oluştur'
