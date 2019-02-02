@@ -20,9 +20,9 @@ return {
     },
     ['afk'] = {
         ['1'] = 'Üzgünüm, Bu özellik sadece aktif kullanıcılar için @kullanıcıadı şeklinde kullanılır!',
-        ['2'] = '%s klavyeden uzaklaşarak tekrar geri döndü %s!',
+        ['2'] = '%s Tekrar klavye başında! %s!',
         ['3'] = 'Not',
-        ['4'] = '%s şuan klavyeden uzaklaştı.%s'
+        ['4'] = '%s Şu an klavyeden uzaklaştı.%s'
     },
     ['antispam'] = {
         ['1'] = 'Kapalı',
@@ -33,7 +33,7 @@ return {
         ['6'] = '%s [%s] Anti-spam medya limitine ulaşıldığı  %s [%s] için %s [%s] gruptan atıldı [%s] .',
         ['7'] = 'Atıldı %s anti-spam medya limitini aştığı için [%s] .',
         ['8'] = 'Maksimum sınır 100.',
-        ['9'] = 'Minimum sınır is 1.',
+        ['9'] = 'Minimum sınır 1.',
         ['10'] = 'Aşağıdan %s anti-spam ayarlarını değiştirin:'
     },
     ['appstore'] = {
@@ -93,15 +93,15 @@ return {
         ['10'] = 'Bu mesaj geçersiz Markdown biçimlendirme içeriyor! Lütfen sözdiziminizi düzeltin ve tekrar deneyin.'
     },
     ['chuck'] = {
-        ['1'] = 'Click to send the result.'
+        ['1'] = 'Sonuçları göndermel için tıkla.'
     },
     ['clickbait'] = {
-        ['1'] = 'Generate Another'
+        ['1'] = 'Başka bir tane oluştur'
     },
     ['coinflip'] = {
-        ['1'] = 'The coin landed on:',
-        ['2'] = 'You were correct!',
-        ['3'] = 'You weren\'t correct, try again...',
+        ['1'] = 'Para yere düştü:',
+        ['2'] = 'Bildin!',
+        ['3'] = 'Bilemedin dostum,tekrar dene...',
         ['4'] = 'Invalid arguments were given. You must specify your guess, it should be either \'heads\' or \'tails\'.'
     },
     ['commandstats'] = {
