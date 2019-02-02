@@ -102,7 +102,7 @@ return {
         ['1'] = 'Para yere düştü:',
         ['2'] = 'Bildin!',
         ['3'] = 'Bilemedin dostum,tekrar dene...',
-        ['4'] = 'Invalid arguments were given. You must specify your guess, it should be either \'heads\' or \'tails\'.'
+        ['4'] = 'Geçersiz argümanlar verildi. Tahmininizi belirtmelisiniz, \ 'heads \' veya \ 'tails \ olmalı'.'
     },
     ['commandstats'] = {
         ['1'] = 'Bu sohbette hiçbir komut gönderilmedi!',
@@ -147,14 +147,14 @@ return {
         ['1'] = 'Lütfen Dogeify istediğiniz metni girin. Her cümle eğik çizgi veya yeni satırlar kullanılarak ayrılmalıdır.'
     },
     ['duckduckgo'] = {
-        ['1'] = 'I\'m not sure what that is!'
+        ['1'] = 'Bunun ne olduğu konusunda emin değilim!'
     },
     ['eightball'] = {
-        ['1'] = 'Yes.',
-        ['2'] = 'No.',
-        ['3'] = 'It is likely so.',
-        ['4'] = 'Well, uh... I\'d ask again later, if I were you.'
-    },
+        ['1'] = 'Evet.',
+        ['2'] = 'Hayır.',
+        ['3'] = 'Muhtemelen öyle.',
+        ['4'] = 'Peki, ah... Senin yerinde olsam, sonradan tekrar sorardım.'
+    }
     ['exec'] = {
         ['1'] = 'Lütfen kodunuzu yürütmek istediğiniz dili seçin:',
         ['2'] = 'Bir hata oluştu! Bağlantı zaman aşımına uğradı. Beni geride bırakmaya mı çalışıyordun?',
@@ -178,11 +178,11 @@ return {
         ['3'] = 'Daha fazla sonuç'
     },
     ['fortune'] = {
-        ['1'] = 'Click to send your fortune!'
+        ['1'] = 'Servetini göndermek için tıkla!'
     },
     ['frombinary'] = {
-        ['1'] = 'Please enter the binary value you would like to convert to a string.',
-        ['2'] = 'Malformed binary!'
+        ['1'] = 'Lütfen bir dizgeye dönüştürmek istediğiniz ikili değeri girin.',
+        ['2'] = 'Hatalı ikili!'
     },
     ['game'] = {
         ['1'] = 'Toplam kazanç: %s\nToplam kayıp: %s\nKalan: %s BarreCoins',
