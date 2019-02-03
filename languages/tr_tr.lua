@@ -412,7 +412,7 @@ Sistem:
         ['7'] = 'Resim',
         ['8'] = 'Kullanıcı adı geçmişi',
         ['9'] = 'Lütfen özellik seçiniz:',
-        ['10'] = 'Lütfen Minecraft oyuncusunun kullanıcı adını giriniz. (örnek: "Holytotem" Holytotem hakkında bilgi verecek).',
+        ['10'] = 'Lütfen Minecraft oyuncusunun kullanıcı adını giriniz. (örnek: "HolyTotem" Holytotem hakkında bilgi verecek).',
         ['11'] = 'Minecraft kullanıcı adları 3 ila 16 karakter uzunluğundadır.'
     },
     ['mute'] = {
